@@ -5,8 +5,9 @@ OpenCDMS Process library
 [![](https://img.shields.io/pypi/v/opencdms.svg)](https://pypi.python.org/pypi/opencdms) [![Travis-CI Build](https://img.shields.io/travis/opencdms/pyopencdms.svg)](https://travis-ci.com/opencdms/pyopencdms) [![Documentation Status](https://readthedocs.org/projects/opencdms/badge/?version=latest)](https://opencdms.readthedocs.io/en/latest/?badge=latest) [![Updates](https://pyup.io/repos/github/opencdms/opencdms/shield.svg)](https://pyup.io/repos/github/opencdms/opencdms/)
 -->
 ## Overview
+The `opencdms.process` package is intended to contain wrappers around capabilities from other (external) projects.
 
-`opencdms.process` has dependencies on external R libraries. The development may also include dependencies running on node.js to allow the same JavaScript validation code to be executed the browser and also on the server. If a user does not have the necessary dependencies then useful error messages should be provided.
+`opencdms.process` has dependencies on external R libraries. The development may also include dependencies running on FreePascal and Node.JS. The use of Node.JS is intended to allow the same JavaScript validation code to be executed by the browser and also on the server. If a user does not have the necessary dependencies then useful error messages should be provided.
 
 ## Example
 
