@@ -24,7 +24,7 @@ test_requirements = [
 
 setup(
     author="OpenCDMS",
-    author_email="info@opencdms.org",
+    author_email="info@opencdms_process.org",
     python_requires=">=3.5",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -40,16 +40,16 @@ setup(
     description="OpenCDMS Python package",
     entry_points={
         "console_scripts": [
-            "opencdms=opencdms.cli:main",
+            "opencdms_process=opencdms_process.cli:main",
         ],
     },
     install_requires=requirements,
     license="MIT license",
     long_description=readme + "\n\n" + history,
     include_package_data=True,
-    keywords="opencdms",
-    name="opencdms",
-    packages=find_packages(include=["opencdms", "opencdms.*"]),
+    keywords="opencdms_process",
+    name="opencdms_process",
+    packages=find_packages(include=["opencdms_process", "opencdms_process.*"]),
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
