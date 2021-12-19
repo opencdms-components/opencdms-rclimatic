@@ -4,7 +4,7 @@
 
 from setuptools import setup, find_packages
 
-with open("README.rst") as readme_file:
+with open("README.md") as readme_file:
     readme = readme_file.read()
 
 with open("HISTORY.rst") as history_file:
@@ -24,7 +24,7 @@ test_requirements = [
 
 setup(
     author="OpenCDMS",
-    author_email="info@opencdms_process.org",
+    author_email="info@opencdms.org",
     python_requires=">=3.5",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
