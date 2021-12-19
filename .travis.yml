@@ -14,12 +14,12 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: opencdms
+  user: opencdms_process
   password:
     secure: PLEASE_REPLACE_ME
   on:
     tags: true
-    repo: opencdms/opencdms
+    repo: opencdms_process/opencdms_process
     python: 3.8
 
 env:

@@ -1,1 +1,1 @@
-"""Unit test package for opencdms."""
+"""Unit test package for opencdms_process."""
