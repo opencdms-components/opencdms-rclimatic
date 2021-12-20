@@ -4,3 +4,5 @@ click~=8.0.3
 setuptools~=57.0.0
 numpy~=1.21.4
 rpy2~=3.4.5
+pygeoapi
+git+https://github.com/opencdms/pyopencdms.git#egg=opencdms
