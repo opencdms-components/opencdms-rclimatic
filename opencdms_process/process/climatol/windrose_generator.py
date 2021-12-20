@@ -15,9 +15,7 @@ PROCESS_METADATA = {
         'en': 'Windrose Generator'
     },
     'description': {
-        'en': 'An example process that takes a name as input, and echoes '
-              'it back as output. Intended to demonstrate a simple '
-              'process with a single literal input.',
+        'en': 'Generates windrose chart.',
     },
     'keywords': ['windrose-generator', 'opencdms'],
     'links': [{
@@ -28,29 +26,53 @@ PROCESS_METADATA = {
         'hreflang': 'en-US'
     }],
     'inputs': {
-        'name': {
-            'title': 'Name',
-            'description': 'The name of the person or entity that you wish to'
-                           'be echoed back as an output',
+        'src_id': {
+            'title': 'Source ID',
+            'description': 'Source ID of the observation data.',
+            'schema': {
+                'type': 'integer'
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
+            'metadata': None,  # TODO how to use?
+            'keywords': ['src_id', 'personal']
+        },
+        'period': {
+            'title': 'Period',
+            'description': 'Period of the observation data.',
             'schema': {
                 'type': 'string'
             },
             'minOccurs': 1,
             'maxOccurs': 1,
             'metadata': None,  # TODO how to use?
-            'keywords': ['full name', 'personal']
+            'keywords': ['period', 'midas-open']
         },
-        'message': {
-            'title': 'Message',
-            'description': 'An optional message to echo as well',
+        'year': {
+            'title': 'Year',
+            'description': 'Year of the observation data.',
             'schema': {
-                'type': 'string'
+                'type': 'integer'
             },
-            'minOccurs': 0,
+            'minOccurs': 1,
             'maxOccurs': 1,
-            'metadata': None,
-            'keywords': ['message']
-        }
+            'metadata': None,  # TODO how to use?
+            'keywords': ['year', 'midas-open']
+        },
+        'elements': {
+            'title': 'Elements',
+            'description': 'Elements of the observation data.',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+            },
+            'minOccurs': 1,
+            'maxOccurs': 1,
+            'metadata': None,  # TODO how to use?
+            'keywords': ['elements', 'midas-open']
+        },
     },
     'outputs': {
         'echo': {
@@ -91,15 +113,17 @@ class WindroseProcessor(BaseProcessor):
             "/code", "opencdms-test-data", "data"
         )
         mimetype = 'application/json'
-        filters = data.get(
-            "filters",
-            {
-                'src_id': 838,
-                'period': 'hourly',
-                'year': 1991,
-                'elements': ['wind_speed', 'wind_direction'],
-            }
-        )
+
+        filters = {
+            'src_id': 838,
+            'period': 'hourly',
+            'year': 1991,
+            'elements': ['wind_speed', 'wind_direction'],
+        }
+
+        if not {'src_id', 'period', 'year', 'elements'} - data.keys():
+            filters = data
+
         session = MidasOpen(connection)
         obs = session.obs(**filters)
 
