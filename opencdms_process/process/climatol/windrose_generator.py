@@ -118,10 +118,11 @@ class WindroseProcessor(BaseProcessor):
 
         if not {'src_id', 'period', 'year', 'elements'} - data.keys():
             filters = data
-
+        print("Working till session factory.")
         session = MidasOpen(connection)
+        print("Session established. Query data.")
         obs = session.obs(**filters)
-
+        print("All operation done. Only return left.")
         return mimetype, {"windrose": windrose(obs)}
 
     def __repr__(self):
