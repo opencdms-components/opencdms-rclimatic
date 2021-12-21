@@ -1,7 +1,7 @@
 from io import BytesIO
 import logging
 import os
-
+import base64
 import PIL.Image as Image
 import rpy2.robjects as ro
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
@@ -147,4 +147,6 @@ def windrose(obs):
     """)
     image_data = ro.globalenv['image']
     image = Image.open(BytesIO(bytes(image_data)))
-    return image
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64decode(buffered.getvalue())
