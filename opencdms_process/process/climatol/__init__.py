@@ -19,7 +19,6 @@ def windrose(obs):
         os.path.dirname(__file__),
         'windrose.r',
     )
-    r(f"""source({script})""")
 
     with localconverter(ro.default_converter + pandas2ri.converter):
         _obs = ro.conversion.py2rpy(obs)
@@ -28,8 +27,8 @@ def windrose(obs):
     # r(_windrose(_obs, 'station code', 'station name'))
     ro.globalenv['observations'] = _obs
 
-    r('''
-
+    r(f'''
+    source({script})
     library("magick")
     figure <- image_graph(width = 350, height = 350, res = 96)
 
