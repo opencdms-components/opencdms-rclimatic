@@ -18,13 +18,7 @@ PROCESS_METADATA = {
         'en': 'Generates windrose chart.',
     },
     'keywords': ['windrose-generator', 'opencdms'],
-    'links': [{
-        'type': 'text/html',
-        'rel': 'canonical',
-        'title': 'information',
-        'href': 'https://example.org/process',
-        'hreflang': 'en-US'
-    }],
+    'links': [],
     'inputs': {
         'src_id': {
             'title': 'Source ID',
@@ -75,10 +69,9 @@ PROCESS_METADATA = {
         },
     },
     'outputs': {
-        'echo': {
-            'title': 'Hello, world',
-            'description': 'A "hello world" echo with the name and (optional)'
-                           ' message submitted for processing',
+        'windrose': {
+            'title': 'Windrose chart',
+            'description': 'Return a chart with windrose visualization.',
             'schema': {
                 'type': 'object',
                 'contentMediaType': 'application/json'
@@ -87,8 +80,10 @@ PROCESS_METADATA = {
     },
     'example': {
         'inputs': {
-            'name': 'World',
-            'message': 'An optional message.',
+            'src_id': 838,
+            'period': 'hourly',
+            'year': 1991,
+            'elements': ['wind_speed', 'wind_direction'],
         }
     }
 }
