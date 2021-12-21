@@ -19,7 +19,7 @@ def windrose(obs):
         os.path.dirname(__file__),
         'windrose.r',
     )
-    r.source(script)
+    r(f"""source({script})""")
 
     with localconverter(ro.default_converter + pandas2ri.converter):
         _obs = ro.conversion.py2rpy(obs)
