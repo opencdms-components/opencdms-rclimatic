@@ -19,9 +19,6 @@ def windrose(obs):
         os.path.dirname(__file__),
         'windrose.r',
     )
-
-    # r(f"""source({script}""")
-
     with localconverter(ro.default_converter + pandas2ri.converter):
         _obs = ro.conversion.py2rpy(obs)
 
@@ -139,7 +136,6 @@ def windrose(obs):
     data=observations
     ob_time=as.POSIXct(data$ob_time,tz='UTC')
     data=cbind(ob_time, data[,3:4])
-
     windrose(data,'838','Bracknell Beaufort Park')
 
     image <- image_write(figure, path = NULL, format = "png")
