@@ -76,6 +76,37 @@ obs.to_csv('example_observations.csv')
 
 ```
 
+### Example use with pygeoapi
+
+`process` from `opencdms_process` can be used in `pygeoapi` as process type
+plugin.
+
+Here is an example of how to use it in `pygeoapi` config:
+
+```yaml
+
+resources:
+    ....
+    other resources
+    ....
+    windrose-generator:
+        type: process
+        processor:
+            name: opencdms_process.process.climatol.windrose_generator.WindroseProcessor
+
+```
+
+On the `pygeoapi` server, when you execute the process, you will get a base64
+encoded string which is an PNG image containing a windrose chart.
+
+You can display this base64 string in javascript as following:
+
+```js
+var image = new Image();
+image.src = BASE64_STRING_FROM_PYGEOAPI_SERVER;
+document.body.appendChild(image);
+```
+
 <!--
   * Free software: MIT license
   * Documentation: https://opencdms.readthedocs.io.
