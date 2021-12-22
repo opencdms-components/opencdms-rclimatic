@@ -150,5 +150,4 @@ def windrose(obs):
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     bas64_bytes = base64.b64encode(buffered.getvalue())
-    print(bas64_bytes)
-    return str(bas64_bytes)
+    return f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
