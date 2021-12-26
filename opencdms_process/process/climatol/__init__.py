@@ -15,15 +15,18 @@ def windrose(obs):
         os.path.dirname(__file__),
         'windrose.r',
     )
-    r.source(script)
+    print("working till script path")
+    # r.source(script)
 
     with localconverter(default_converter + pandas2ri.converter):
         _obs = conversion.py2rpy(obs)
 
     globalenv['observations'] = _obs
+    globalenv['script'] = script
 
     r(f"""
 library('magick')
+source(script)
 figure <- image_graph(width = 350, height = 350, res = 96)
 data=observations
 ob_time=as.POSIXct(data$ob_time,tz='UTC')

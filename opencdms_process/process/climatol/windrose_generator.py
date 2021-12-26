@@ -91,6 +91,34 @@ PROCESS_METADATA = {
 }
 
 
+class WindroseDataProcessor:
+    def __init__(self, filters):
+        self.filters = filters
+
+    def generate_chart(self, base64_encoded=False):
+        connection = os.path.join(
+            "/home/faysal/PycharmProjects", "opencdms-test-data", "data"
+        )
+
+        print("Working till session factory.")
+        session = MidasOpen(connection)
+        print("Session established. Query data.")
+        obs = session.obs(**self.filters)
+        print("Get windrose image data in the process.")
+        image = windrose(obs)
+        buffered = BytesIO()
+        image.save(buffered, format="PNG")
+
+        if base64_encoded:
+            bas64_bytes = base64.b64encode(buffered.getvalue())
+
+            returned_image = f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
+        else:
+            returned_image = image
+
+        return returned_image
+
+
 class WindroseProcessor(BaseProcessor):
     """Hello World Processor example"""
 
@@ -106,11 +134,7 @@ class WindroseProcessor(BaseProcessor):
         super().__init__(processor_def, PROCESS_METADATA)
 
     def execute(self, data):
-        connection = os.path.join(
-            "/code", "opencdms-test-data", "data"
-        )
         mimetype = 'application/json'
-
         filters = {
             'src_id': 838,
             'period': 'hourly',
@@ -118,21 +142,30 @@ class WindroseProcessor(BaseProcessor):
             'elements': ['wind_speed', 'wind_direction'],
         }
 
-        if not {'src_id', 'period', 'year', 'elements'} - data.keys():
+        if not {'src_id', 'period', 'year', 'elements'} - set(data.keys()):
             filters = data
-        print("Working till session factory.")
-        session = MidasOpen(connection)
-        print("Session established. Query data.")
-        obs = session.obs(**filters)
-        print("Get windrose image data in the process.")
-        image = windrose(obs)
-        buffered = BytesIO()
-        image.save(buffered, format="PNG")
-        bas64_bytes = base64.b64encode(buffered.getvalue())
-        print("All operation done. Only return left.")
+
+        windrose_chart = WindroseDataProcessor(filters)\
+            .generate_chart(base64_encoded=True)
+
         return mimetype, {
-            'windrose': f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
+            'windrose': windrose_chart
         }
 
     def __repr__(self):
         return '<WindroseProcessor> {}'.format(self.name)
+
+
+if __name__ == "__main__":
+
+    filters = {
+        'src_id': 838,
+        'period': 'hourly',
+        'year': 1991,
+        'elements': ['wind_speed', 'wind_direction'],
+    }
+
+    windrose_chart = WindroseDataProcessor(filters) \
+        .generate_chart(base64_encoded=True)
+
+    print(windrose_chart)
