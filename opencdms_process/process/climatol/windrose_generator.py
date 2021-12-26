@@ -3,6 +3,8 @@ import os.path
 from opencdms_process.process.climatol import windrose
 from opencdms import MidasOpen
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
+from io import BytesIO
+import base64
 
 
 LOGGER = logging.getLogger(__name__)
@@ -122,8 +124,15 @@ class WindroseProcessor(BaseProcessor):
         session = MidasOpen(connection)
         print("Session established. Query data.")
         obs = session.obs(**filters)
+        print("Get windrose image data in the process.")
+        image = windrose(obs)
+        buffered = BytesIO()
+        image.save(buffered, format="PNG")
+        bas64_bytes = base64.b64encode(buffered.getvalue())
         print("All operation done. Only return left.")
-        return mimetype, {"windrose": windrose(obs)}
+        return mimetype, {
+            'windrose': f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
+        }
 
     def __repr__(self):
         return '<WindroseProcessor> {}'.format(self.name)
