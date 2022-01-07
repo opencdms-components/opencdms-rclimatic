@@ -11,10 +11,14 @@ from rpy2.robjects.conversion import localconverter
 def windrose(obs):
     rpy2_logger.setLevel(logging.ERROR)
 
-    # script = os.path.join(
-    #     os.path.dirname(__file__),
-    #     'windrose.r',
-    # )
+    script = os.path.join(
+        os.path.dirname(__file__),
+        'windrose.r',
+    )
+    print("script path:", script)
+
+    with open(script, "r") as script_file:
+        print(script_file.read())
     # print("working till script path")
     # r.source(script)
 

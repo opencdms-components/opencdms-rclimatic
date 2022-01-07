@@ -154,18 +154,3 @@ class WindroseProcessor(BaseProcessor):
 
     def __repr__(self):
         return '<WindroseProcessor> {}'.format(self.name)
-
-
-if __name__ == "__main__":
-
-    filters = {
-        'src_id': 838,
-        'period': 'hourly',
-        'year': 1991,
-        'elements': ['wind_speed', 'wind_direction'],
-    }
-
-    windrose_chart = WindroseDataProcessor(filters) \
-        .generate_chart(base64_encoded=True)
-
-    print(windrose_chart)
