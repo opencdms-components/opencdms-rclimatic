@@ -92,15 +92,12 @@ PROCESS_METADATA = {
 
 
 class WindroseDataProcessor:
-    def __init__(self, filters):
+    def __init__(self, filters, connection):
         self.filters = filters
+        self.connection = connection
 
     def generate_chart(self, base64_encoded=False):
-        connection = os.path.join(
-            "/home/faysal/PycharmProjects", "opencdms-test-data", "data"
-        )
-
-        session = MidasOpen(connection)
+        session = MidasOpen(self.connection)
         obs = session.obs(**self.filters)
         image = windrose(obs)
         buffered = BytesIO()
@@ -108,7 +105,6 @@ class WindroseDataProcessor:
 
         if base64_encoded:
             bas64_bytes = base64.b64encode(buffered.getvalue())
-
             returned_image = f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
         else:
             returned_image = image
@@ -141,8 +137,8 @@ class WindroseProcessor(BaseProcessor):
 
         if not {'src_id', 'period', 'year', 'elements'} - set(data.keys()):
             filters = data
-
-        windrose_chart = WindroseDataProcessor(filters)\
+        connection = "REPLACE_WITH_A_WORKING_CONNECTION"
+        windrose_chart = WindroseDataProcessor(filters, connection)\
             .generate_chart(base64_encoded=True)
 
         return mimetype, {
