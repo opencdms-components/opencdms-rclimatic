@@ -100,11 +100,8 @@ class WindroseDataProcessor:
             "/home/faysal/PycharmProjects", "opencdms-test-data", "data"
         )
 
-        print("Working till session factory.")
         session = MidasOpen(connection)
-        print("Session established. Query data.")
         obs = session.obs(**self.filters)
-        print("Get windrose image data in the process.")
         image = windrose(obs)
         buffered = BytesIO()
         image.save(buffered, format="PNG")
