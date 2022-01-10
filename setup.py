@@ -10,9 +10,8 @@ with open("README.md") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = [
-    "Click>=7.0",
-]
+with open("requirements.txt", "r") as requirements_file:
+    requirements = requirements_file.read().splitlines()
 
 setup_requirements = [
     "pytest-runner",
@@ -56,4 +55,5 @@ setup(
     url="https://github.com/opencdms/opencdms",
     version="0.1.0",
     zip_safe=False,
+    package_data={'': ["*.r", "*.R"]}
 )
