@@ -34,14 +34,14 @@ python3 -m venv opencdms-env
 . opencdms-env/bin/activate
 
 # Install dependencies used by `opencdms-process` and `pyopencdms`
-pip3 install -r ~/opencdms/processes/opencdms-process/requirements.txt
-pip3 install -r ~/opencdms/processes/pyopencdms/requirements.txt
-pip3 install -r ~/opencdms/processes/pyopencdms/requirements_dev.txt
+pip3 install -r ~/opencdms/processes/git/opencdms-process/requirements.txt
+pip3 install -r ~/opencdms/processes/git/pyopencdms/requirements.txt
+pip3 install -r ~/opencdms/processes/git/pyopencdms/requirements_dev.txt
 
 # Add `opencdms` to the virtual environment's python path
 # If you used the system's `python3` to create the virtualenv then this will likely
 # be `python3.6` on Ubuntu 18.04 and `python3.7` on Ubunutu 20.04
-echo $HOME"/opencdms/processes/pyopencdms/" > opencdms-env/lib/python3.6/site-packages/opencdms.pth
+echo $HOME"/opencdms/processes/git/pyopencdms/" > opencdms-env/lib/python3.6/site-packages/opencdms.pth
 
 ```
 
