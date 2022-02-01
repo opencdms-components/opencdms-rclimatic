@@ -5,5 +5,5 @@ setuptools
 numpy
 rpy2
 pygeoapi
-opencdms@git+https://github.com/opencdms/pyopencdms.git
+opencdms@git+https://github.com/opencdms/pyopencdms.git@main
 opencdms_test_data@git+https://github.com/opencdms/opencdms-test-data.git
