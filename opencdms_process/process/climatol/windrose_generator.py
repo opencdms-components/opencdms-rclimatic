@@ -5,7 +5,7 @@ from opencdms import MidasOpen
 from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
 from io import BytesIO
 import base64
-
+import opencdms_test_data
 
 LOGGER = logging.getLogger(__name__)
 
@@ -137,7 +137,7 @@ class WindroseProcessor(BaseProcessor):
 
         if not {'src_id', 'period', 'year', 'elements'} - set(data.keys()):
             filters = data
-        connection = "REPLACE_WITH_A_WORKING_CONNECTION"
+        connection = opencdms_test_data.connections.midas_open
         windrose_chart = WindroseDataProcessor(filters, connection)\
             .generate_chart(base64_encoded=True)
 

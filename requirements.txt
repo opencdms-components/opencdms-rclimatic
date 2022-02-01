@@ -6,3 +6,4 @@ numpy
 rpy2
 pygeoapi
 opencdms@git+https://github.com/opencdms/pyopencdms.git#egg=opencdms
+opencdms_test_data@git+https://github.com/opencdms/opencdms-test-data.git
