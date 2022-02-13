@@ -1,10 +1,63 @@
 # This file is a personal reference to better understand rpy2
 # See https://rpy2.github.io/doc/v3.4.x/html/introduction.html
 
-from typing import Final, Tuple
+from cmath import nan
+from tkinter.messagebox import NO
+from typing import Dict, Final, List, Tuple
 from numpy import NaN
-from rpy2.robjects import r, packages, vectors, globalenv
+from rpy2.robjects import r, packages, vectors, globalenv, pandas2ri, default_converter, conversion
 from rpy2.robjects.vectors import StrVector
+from rpy2.robjects.conversion import localconverter
+import pandas
+
+def climatic_summary(data: pandas.DataFrame, date_time: str, station: str = None, elements: str = None,  
+                             year = None, month = None, dekad = None, 
+                             pentad = None,
+                             to: Tuple = ('hourly', 'daily', 'pentad', 'dekadal', 
+                                    'monthly', 'annual-within-year', 
+                                    'annual', 'longterm-monthly', 
+                                    'longterm-within-year', 'station',
+                                    'overall'),
+                             by = None,
+                             doy = None, doy_first = 1, doy_last = 366, 
+                             summaries: Dict = {'n':'dplyr::n'}, na_rm = False,
+                             na_prop = None, na_n = None, na_consec = None, 
+                             na_n_non = None,
+                             first_date = False, n_dates = False, last_date = False,
+                             summaries_params: List = [], names = '{.fn}_{.col}') -> pandas.DataFrame:
+    # Install the required R packages
+    R_RINSTAT_CLIMATIC: str = 'RInstatClimatic'
+    R_PACKAGE_DIR: str = '~/local/R_libs'
+    r_package_names = (R_RINSTAT_CLIMATIC, )
+    r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x, lib_loc = R_PACKAGE_DIR)]
+    if len(r_packages_to_install) > 0:
+        r_devtools = packages.importr('devtools')
+        r_devtools.install_github('IDEMSInternational/' + R_RINSTAT_CLIMATIC)
+
+    #  convert pandas data frame to R data frame:
+    with localconverter(default_converter + pandas2ri.converter):
+        r_data = conversion.py2rpy(data)
+
+    # execute R function and return result
+    r_rinstat_climatic = packages.importr(R_RINSTAT_CLIMATIC)    
+    return_values = r_rinstat_climatic.climatic_summary(r_data, date_time)
+    return return_values
+
+def timeseries_plot(data: pandas.DataFrame, date_time: str, elements: str, station: str = None, facets: Tuple = ('stations', 'elements', 'both', 'none'),
+                            add_points: bool = False, add_line_of_best_fit: bool = False,
+                            se: bool = True, add_path: bool = False, add_step: bool = False,
+                            na_rm: bool = False, show_legend: bool = nan):
+    # TODO ensure show_legend nan converted to R NA
+    # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python?
+    pass
+
+def export_geoclim_month(data: pandas.DataFrame, year, month, element: str, metadata = None,
+                                 join_by = None, station_id = None,
+                                 latitude = None, longitude = None, add_cols = None, 
+                                 file_path: str = None,
+                                 **kwargs) -> str:
+    # TODO if file_path is None then set it to "GEOCLIM-" + element + ".csv"
+    pass
 
 def naflex_na_omit_if(data: Tuple, prop = None, n = None, consec = None, n_non = None, prop_strict = False) -> Tuple:
 
@@ -21,7 +74,6 @@ def naflex_na_omit_if(data: Tuple, prop = None, n = None, consec = None, n_non =
     # execute R function and return result
     r_naflex = packages.importr(R_NAFLEX)    
     return_values = r_naflex.na_omit_if(vectors.FloatVector(data), prop = prop)
-    len_return_values = len(return_values)
     return tuple(return_values)
     
 def simple_rpy2_example() -> str:
