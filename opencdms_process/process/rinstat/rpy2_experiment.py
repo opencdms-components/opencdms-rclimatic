@@ -2,7 +2,6 @@
 # See https://rpy2.github.io/doc/v3.4.x/html/introduction.html
 
 from cmath import nan
-from tkinter.messagebox import NO
 from typing import Dict, Final, List, Tuple
 from numpy import NaN
 from rpy2.robjects import r, packages, vectors, globalenv, pandas2ri, default_converter, conversion
@@ -10,14 +9,10 @@ from rpy2.robjects.vectors import StrVector
 from rpy2.robjects.conversion import localconverter
 import pandas
 
-def climatic_summary(data: pandas.DataFrame, date_time: str, station: str = None, elements: str = None,  
+def climatic_summary(data: pandas.DataFrame, date_time: str, station: str = None, elements: List = [],  
                              year = None, month = None, dekad = None, 
                              pentad = None,
-                             to: Tuple = ('hourly', 'daily', 'pentad', 'dekadal', 
-                                    'monthly', 'annual-within-year', 
-                                    'annual', 'longterm-monthly', 
-                                    'longterm-within-year', 'station',
-                                    'overall'),
+                             to: str = None,
                              by = None,
                              doy = None, doy_first = 1, doy_last = 366, 
                              summaries: Dict = {'n':'dplyr::n'}, na_rm = False,
@@ -25,23 +20,52 @@ def climatic_summary(data: pandas.DataFrame, date_time: str, station: str = None
                              na_n_non = None,
                              first_date = False, n_dates = False, last_date = False,
                              summaries_params: List = [], names = '{.fn}_{.col}') -> pandas.DataFrame:
-    # Install the required R packages
+    """ 'to' parameter must be one of ('hourly', 'daily', 'pentad', 'dekadal', 
+                                    'monthly', 'annual-within-year', 
+                                    'annual', 'longterm-monthly', 
+                                    'longterm-within-year', 'station',
+                                    'overall') """
+    # Install R packages from CRAN
+    R_DEVTOOLS: str = 'devtools'
+    R_PACKAGE_DIR: str = '~/local/R_libs'
+    r_package_names = (R_DEVTOOLS, )
+    #r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x, lib_loc = R_PACKAGE_DIR)]
+    r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x)]
+    if len(r_packages_to_install) > 0:
+        r_utils = packages.importr('utils')
+        r_utils.chooseCRANmirror(ind=1) # select the first mirror in the list
+        r_utils.install_packages(StrVector(r_packages_to_install), lib = R_PACKAGE_DIR)
+
+    # Install R packages from GitHub
     R_RINSTAT_CLIMATIC: str = 'RInstatClimatic'
     R_PACKAGE_DIR: str = '~/local/R_libs'
     r_package_names = (R_RINSTAT_CLIMATIC, )
-    r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x, lib_loc = R_PACKAGE_DIR)]
+    #r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x, lib_loc = R_PACKAGE_DIR)]
+    r_packages_to_install = [x for x in r_package_names if not packages.isinstalled(x)]
     if len(r_packages_to_install) > 0:
-        r_devtools = packages.importr('devtools')
-        r_devtools.install_github('IDEMSInternational/' + R_RINSTAT_CLIMATIC)
+        r_devtools = packages.importr(R_DEVTOOLS)
+        #r_devtools.install_github('IDEMSInternational/' + R_RINSTAT_CLIMATIC) #TODO add lib path to specify where to install?
 
     #  convert pandas data frame to R data frame:
     with localconverter(default_converter + pandas2ri.converter):
         r_data = conversion.py2rpy(data)
 
-    # execute R function and return result
+    # TODO temp -remove me, c(mean = "mean", sd = "sd")
+    # r_summaries = vectors.StrVector(['mean', 'sd'])
+    # r_summaries.names = ['mean', 'sd']
+    r_summaries = vectors.StrVector(list(summaries.values()))
+    r_summaries.names = list(summaries.keys())
+
+    # execute R function
     r_rinstat_climatic = packages.importr(R_RINSTAT_CLIMATIC)    
-    return_values = r_rinstat_climatic.climatic_summary(r_data, date_time)
-    return return_values
+    #r_data_returned = r_rinstat_climatic.climatic_summary(data = r_data, date_time = date_time, elements = vectors.StrVector(elements), to = to, summaries = vectors.ListVector(summaries), na_rm = na_rm)
+    r_data_returned = r_rinstat_climatic.climatic_summary(data = r_data, date_time = date_time, elements = vectors.StrVector(elements), to = to, summaries = r_summaries, na_rm = na_rm)
+
+    # convert R data frame to pandas data frame
+    with localconverter(default_converter + pandas2ri.converter):
+        data_returned = conversion.rpy2py(r_data_returned)
+
+    return data_returned
 
 def timeseries_plot(data: pandas.DataFrame, date_time: str, elements: str, station: str = None, facets: Tuple = ('stations', 'elements', 'both', 'none'),
                             add_points: bool = False, add_line_of_best_fit: bool = False,

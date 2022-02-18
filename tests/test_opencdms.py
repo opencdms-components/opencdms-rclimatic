@@ -45,8 +45,14 @@ import opencdms_process.process.rinstat.rpy2_experiment
 
 from opencdms_process.process.rinstat import rpy2_experiment
 import math
+import pandas as pd
 
-#from opencdms_process.process import date_components
+def test_climatic_summary():
+    df = pd.read_csv('/home/stephen/opencdms/processes/opencdms-process/tests/data/dodoma_short_no_NA.csv', 
+                     parse_dates=['date'], dayfirst=True)
+    
+    actual = rpy2_experiment.climatic_summary(data=df, date_time = 'date', elements = ['rain', 'tmax'], summaries = {'mean':'mean', 'sd':'sd'}, na_rm = True, to = 'overall')
+    assert str(actual.head()) == '   mean_rain   sd_rain  mean_tmax   sd_tmax\n1     1.2605  6.143391    27.3309  7.297193'
 
 def test_naflex_na_omit_if():
     input_data: Tuple = (1.0, 3.0, nan, nan, 3.0, 2.0, nan, 5.0, 8.0, 7.0)
@@ -58,12 +64,5 @@ def test_naflex_na_omit_if():
     assert input_data_non_nan == actual_non_nan
     
     actual: Tuple = rpy2_experiment.naflex_na_omit_if(input_data, 0.3)
-    assert len(actual) == len(input_data) - 3
-    input_data_non_nan: Tuple = tuple(x for x in input_data if math.isnan(x) == False)
-    actual_non_nan: Tuple = tuple(x for x in actual if math.isnan(x) == False)
     assert input_data_non_nan == actual
-    
-def test_simple_rpy2_example():
-    
-    assert rpy2_experiment.simple_rpy2_example() == 'a-b-c-d-e-f-g-h-i-j-k-l-m-n-o-p-q-r-s-t-u-v-w-x-y-z'
-    
+        
