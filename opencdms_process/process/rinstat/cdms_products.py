@@ -1,7 +1,9 @@
 from cmath import nan
+from os import stat
 from typing import Dict, List
 
 from pandas import DataFrame
+from rpy2.robjects import NULL as r_NULL
 from rpy2.robjects import conversion, default_converter, packages, pandas2ri
 from rpy2.robjects.vectors import StrVector
 
@@ -45,15 +47,20 @@ def climatic_summary(
     r_summaries = StrVector(list(summaries.values()))
     r_summaries.names = list(summaries.keys())
 
+    station = r_NULL if station is None else station
+    na_prop = r_NULL if na_prop is None else na_prop
+
     # execute R function
     r_rinstat_climatic = packages.importr("RInstatClimatic")
     r_data_returned = r_rinstat_climatic.climatic_summary(
         data=r_data,
         date_time=date_time,
+        station=station,
         elements=StrVector(elements),
         to=to,
         summaries=r_summaries,
         na_rm=na_rm,
+        na_prop=na_prop,
     )
 
     # convert R data frame to pandas data frame
