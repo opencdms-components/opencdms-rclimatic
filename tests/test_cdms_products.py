@@ -1,7 +1,7 @@
 import os
 
-from pandas import DataFrame, read_csv
 import pandas
+from pandas import DataFrame, read_csv
 
 from opencdms_process.process.rinstat import cdms_products
 
@@ -133,3 +133,25 @@ def test_climatic_summary():
     actual_from_csv: pandas.DataFrame = read_csv(output_file_actual)
     diffs: DataFrame = actual_from_csv.compare(expected_from_csv)
     assert diffs.empty
+
+
+def test_timeseries_plot():
+    data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    output_path_actual: str = os.path.join(TEST_DIR, "results_actual", "")
+
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name="timeseries_plot_actual010.jpg",
+        data=data,
+        date_time="date",
+        elements="tmax",
+        station="station_name",
+        facets="stations",
+    )

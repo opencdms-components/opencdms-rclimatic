@@ -1,7 +1,8 @@
 from cmath import nan
-from os import stat
+from io import BytesIO
 from typing import Dict, List
 
+import PIL.Image as Image
 from pandas import DataFrame
 from rpy2.robjects import NULL as r_NULL
 from rpy2.robjects import conversion, default_converter, packages, pandas2ri
@@ -11,13 +12,13 @@ from rpy2.robjects.vectors import StrVector
 def climatic_summary(
     data: DataFrame,
     date_time: str,
+    to: str,
     station: str = None,
     elements: List = [],
     year=None,
     month=None,
     dekad=None,
     pentad=None,
-    to: str = None,
     by=None,
     doy=None,
     doy_first=1,
@@ -71,11 +72,13 @@ def climatic_summary(
 
 
 def timeseries_plot(
+    path: str,
+    file_name: str,
     data: DataFrame,
     date_time: str,
     elements: str,
+    facets: str,
     station: str = None,
-    facets: List = ["stations", "elements", "both", "none"],
     add_points: bool = False,
     add_line_of_best_fit: bool = False,
     se: bool = True,
@@ -86,7 +89,25 @@ def timeseries_plot(
 ):
     # TODO ensure show_legend nan converted to R NA
     # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python?
-    pass
+    # TODO `facets`` must be one of ["stations", "elements", "both", "none"]
+
+    station = r_NULL if station is None else station
+    with conversion.localconverter(default_converter + pandas2ri.converter):
+        r_data = conversion.py2rpy(data)
+
+    r_rinstat_climatic = packages.importr("RInstatClimatic")
+    r_plot = r_rinstat_climatic.timeseries_plot(
+        data=r_data,
+        date_time=date_time,
+        elements=elements,
+        station=station,
+        facets=facets,
+    )
+
+    r_ggplot2 = packages.importr("ggplot2")
+    r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
+
+    return 0
 
 
 def export_geoclim_month(
