@@ -12,13 +12,13 @@ from rpy2.robjects.vectors import StrVector
 def climatic_summary(
     data: DataFrame,
     date_time: str,
-    to: str,
     station: str = None,
     elements: List = [],
     year=None,
     month=None,
     dekad=None,
     pentad=None,
+    to: str = "hourly",
     by=None,
     doy=None,
     doy_first=1,
@@ -35,11 +35,11 @@ def climatic_summary(
     summaries_params: List = [],
     names="{.fn}_{.col}",
 ) -> DataFrame:
-    """'to' parameter must be one of ('hourly', 'daily', 'pentad', 'dekadal',
-    'monthly', 'annual-within-year',
-    'annual', 'longterm-monthly',
-    'longterm-within-year', 'station',
-    'overall')"""
+    """'to' parameter must be one of ("hourly", "daily", "pentad", "dekadal", 
+                                    "monthly", "annual-within-year", 
+                                    "annual", "longterm-monthly", 
+                                    "longterm-within-year", "station",
+                                    "overall")"""
 
     #  convert Python objects to R objects:
     with conversion.localconverter(default_converter + pandas2ri.converter):
@@ -52,8 +52,8 @@ def climatic_summary(
     na_prop = r_NULL if na_prop is None else na_prop
 
     # execute R function
-    r_rinstat_climatic = packages.importr("RInstatClimatic")
-    r_data_returned = r_rinstat_climatic.climatic_summary(
+    r_cdms_products = packages.importr("cdms.products")
+    r_data_returned = r_cdms_products.climatic_summary(
         data=r_data,
         date_time=date_time,
         station=station,
@@ -77,8 +77,9 @@ def timeseries_plot(
     data: DataFrame,
     date_time: str,
     elements: str,
-    facets: str,
     station: str = None,
+    facet_by: str = "stations",
+    type: str = "line",
     add_points: bool = False,
     add_line_of_best_fit: bool = False,
     se: bool = True,
@@ -86,28 +87,31 @@ def timeseries_plot(
     add_step: bool = False,
     na_rm: bool = False,
     show_legend: bool = nan,
+    title: str = "Timeseries Plot", 
+    x_title:str = None, y_title:str = None
 ):
     # TODO ensure show_legend nan converted to R NA
-    # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python?
-    # TODO `facets`` must be one of ["stations", "elements", "both", "none"]
+    # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python and JS?
+    # TODO `facet_by` must be one of ("stations", "elements", "stations-elements", "elements-stations", "none")
+    # TODO `type` must be one of ("line", "bar")
 
     station = r_NULL if station is None else station
+    x_title = r_NULL if x_title is None else x_title
+    y_title = r_NULL if y_title is None else y_title
     with conversion.localconverter(default_converter + pandas2ri.converter):
         r_data = conversion.py2rpy(data)
 
-    r_rinstat_climatic = packages.importr("RInstatClimatic")
-    r_plot = r_rinstat_climatic.timeseries_plot(
+    r_cdms_products = packages.importr("cdms.products")
+    r_plot = r_cdms_products.timeseries_plot(
         data=r_data,
         date_time=date_time,
         elements=elements,
         station=station,
-        facets=facets,
+        facet_by=facet_by,
     )
 
     r_ggplot2 = packages.importr("ggplot2")
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
-
-    return 0
 
 
 def export_geoclim_month(
@@ -115,14 +119,15 @@ def export_geoclim_month(
     year,
     month,
     element: str,
+    station_id,
+    latitude,
+    longitude,
     metadata=None,
     join_by=None,
-    station_id=None,
-    latitude=None,
-    longitude=None,
     add_cols=None,
     file_path: str = None,
     **kwargs
 ) -> str:
     # TODO if file_path is None then set it to "GEOCLIM-" + element + ".csv"
+    # TODO convert `kwargs`` to R parameters
     pass

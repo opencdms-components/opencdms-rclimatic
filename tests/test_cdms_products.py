@@ -153,5 +153,5 @@ def test_timeseries_plot():
         date_time="date",
         elements="tmax",
         station="station_name",
-        facets="stations",
+        facet_by="stations",
     )
