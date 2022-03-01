@@ -3,6 +3,7 @@ from io import BytesIO
 from typing import Dict, List
 
 import PIL.Image as Image
+from numpy import integer
 from pandas import DataFrame
 from rpy2.robjects import NULL as r_NULL
 from rpy2.robjects import conversion, default_converter, packages, pandas2ri
@@ -14,32 +15,32 @@ def climatic_summary(
     date_time: str,
     station: str = None,
     elements: List = [],
-    year=None,
-    month=None,
-    dekad=None,
-    pentad=None,
+    year: str = None,
+    month: str = None,
+    dekad=None, #TODO add type
+    pentad=None, #TODO add type
     to: str = "hourly",
-    by=None,
-    doy=None,
-    doy_first=1,
-    doy_last=366,
+    by=None, #TODO add type
+    doy: str = None,
+    doy_first: integer = 1,
+    doy_last: integer = 366,
     summaries: Dict = {"n": "dplyr::n"},
-    na_rm=False,
-    na_prop=None,
-    na_n=None,
-    na_consec=None,
-    na_n_non=None,
-    first_date=False,
-    n_dates=False,
-    last_date=False,
+    na_rm: bool = False,
+    na_prop: integer = None,
+    na_n: integer = None,
+    na_consec: integer = None,
+    na_n_non: integer = None,
+    first_date: bool = False,
+    n_dates: bool = False,
+    last_date: bool = False,
     summaries_params: List = [],
-    names="{.fn}_{.col}",
+    names: str = "{.fn}_{.col}",
 ) -> DataFrame:
-    """'to' parameter must be one of ("hourly", "daily", "pentad", "dekadal", 
-                                    "monthly", "annual-within-year", 
-                                    "annual", "longterm-monthly", 
-                                    "longterm-within-year", "station",
-                                    "overall")"""
+    """TODO 'to' parameter must be one of ("hourly", "daily", "pentad", "dekadal",
+    "monthly", "annual-within-year",
+    "annual", "longterm-monthly",
+    "longterm-within-year", "station",
+    "overall")"""
 
     #  convert Python objects to R objects:
     with conversion.localconverter(default_converter + pandas2ri.converter):
@@ -49,7 +50,16 @@ def climatic_summary(
     r_summaries.names = list(summaries.keys())
 
     station = r_NULL if station is None else station
+    year = r_NULL if year is None else year
+    month = r_NULL if month is None else month
+    dekad = r_NULL if dekad is None else dekad
+    pentad = r_NULL if pentad is None else pentad
+    by = r_NULL if by is None else by
+    doy = r_NULL if doy is None else doy
     na_prop = r_NULL if na_prop is None else na_prop
+    na_n = r_NULL if na_n is None else na_n
+    na_consec = r_NULL if na_consec is None else na_consec
+    na_n_non = r_NULL if na_n_non is None else na_n_non
 
     # execute R function
     r_cdms_products = packages.importr("cdms.products")
@@ -58,10 +68,26 @@ def climatic_summary(
         date_time=date_time,
         station=station,
         elements=StrVector(elements),
+        year=year,
+        month=month,
+        dekad=dekad,
+        pentad=pentad,
         to=to,
+        by=by,
+        doy=doy,
+        doy_first=doy_first,
+        doy_last=doy_last,
         summaries=r_summaries,
         na_rm=na_rm,
         na_prop=na_prop,
+        na_n=na_n,
+        na_consec=na_consec,
+        na_n_non=na_n_non,
+        first_date=first_date,
+        n_dates=n_dates,
+        last_date=last_date,
+        # summaries_params: r_summaries_params, TODO convert to R type 'list of lists'
+        names=names,
     )
 
     # convert R data frame to pandas data frame
@@ -87,8 +113,9 @@ def timeseries_plot(
     add_step: bool = False,
     na_rm: bool = False,
     show_legend: bool = nan,
-    title: str = "Timeseries Plot", 
-    x_title:str = None, y_title:str = None
+    title: str = "Timeseries Plot",
+    x_title: str = None,
+    y_title: str = None,
 ):
     # TODO ensure show_legend nan converted to R NA
     # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python and JS?
