@@ -86,6 +86,64 @@ def test_climatic_summary():
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual030.csv")
 
 
+def test_inventory_table():
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # Functions output for one element (rain) for day
+    actual = cdms_products.inventory_table(
+        data=data,
+        date_time="date",
+        elements=["rain"],
+        station="station_name",
+        year="year",
+        month="month",
+        day="day",
+    )
+    assert __is_expected_csv(data=actual, file_name="inventory_table_actual010.csv")
+
+    # Functions output for all elements for day
+    actual = cdms_products.inventory_table(
+        data=data,
+        date_time="date",
+        elements=["tmax", "tmin", "rain", "hmax", "hmin", "sunh", "ws", "wd"],
+        station="station_name",
+        year="year",
+        month="month",
+        day="day",
+    )
+    assert __is_expected_csv(data=actual, file_name="inventory_table_actual020.csv")
+
+    # Functions output for one element (rain) for doy
+    actual = cdms_products.inventory_table(
+        data=data,
+        date_time="date",
+        elements=["rain"],
+        station="station_name",
+        year="year",
+        month="month",
+        day="doy",
+    )
+    assert __is_expected_csv(data=actual, file_name="inventory_table_actual030.csv")
+
+    # Functions output for all elements for doy
+    actual = cdms_products.inventory_table(
+        data=data,
+        date_time="date",
+        elements=["tmax", "tmin", "rain", "hmax", "hmin", "sunh", "ws", "wd"],
+        station="station_name",
+        year="year",
+        month="month",
+        day="doy",
+    )
+    assert __is_expected_csv(data=actual, file_name="inventory_table_actual040.csv")
+
+
 def test_timeseries_plot():
     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
     data = read_csv(

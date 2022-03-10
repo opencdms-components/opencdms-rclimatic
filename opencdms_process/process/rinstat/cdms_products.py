@@ -1,13 +1,19 @@
 from cmath import nan
+import copy
 from io import BytesIO
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import PIL.Image as Image
 from numpy import integer
 from pandas import DataFrame
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import conversion, default_converter, packages, pandas2ri
+from rpy2.robjects import conversion, default_converter, packages, pandas2ri, globalenv
 from rpy2.robjects.vectors import StrVector
+from rpy2.robjects.vectors import DataFrame as RDataFrame
+from rpy2.robjects import r
+
+
+r_cdms_products = packages.importr("cdms.products")
 
 
 def climatic_summary(
@@ -17,10 +23,10 @@ def climatic_summary(
     elements: List = [],
     year: str = None,
     month: str = None,
-    dekad=None, #TODO add type
-    pentad=None, #TODO add type
+    dekad=None,  # TODO add type
+    pentad=None,  # TODO add type
     to: str = "hourly",
-    by=None, #TODO add type
+    by=None,  # TODO add type
     doy: str = None,
     doy_first: integer = 1,
     doy_last: integer = 366,
@@ -42,59 +48,86 @@ def climatic_summary(
     "longterm-within-year", "station",
     "overall")"""
 
-    #  convert Python objects to R objects:
-    with conversion.localconverter(default_converter + pandas2ri.converter):
-        r_data = conversion.py2rpy(data)
-
-    r_summaries = StrVector(list(summaries.values()))
-    r_summaries.names = list(summaries.keys())
-
-    station = r_NULL if station is None else station
-    year = r_NULL if year is None else year
-    month = r_NULL if month is None else month
-    dekad = r_NULL if dekad is None else dekad
-    pentad = r_NULL if pentad is None else pentad
-    by = r_NULL if by is None else by
-    doy = r_NULL if doy is None else doy
-    na_prop = r_NULL if na_prop is None else na_prop
-    na_n = r_NULL if na_n is None else na_n
-    na_consec = r_NULL if na_consec is None else na_consec
-    na_n_non = r_NULL if na_n_non is None else na_n_non
-
-    # execute R function
-    r_cdms_products = packages.importr("cdms.products")
-    r_data_returned = r_cdms_products.climatic_summary(
-        data=r_data,
-        date_time=date_time,
-        station=station,
-        elements=StrVector(elements),
-        year=year,
-        month=month,
-        dekad=dekad,
-        pentad=pentad,
-        to=to,
-        by=by,
-        doy=doy,
-        doy_first=doy_first,
-        doy_last=doy_last,
-        summaries=r_summaries,
-        na_rm=na_rm,
-        na_prop=na_prop,
-        na_n=na_n,
-        na_consec=na_consec,
-        na_n_non=na_n_non,
-        first_date=first_date,
-        n_dates=n_dates,
-        last_date=last_date,
+    r_params = _get_r_params(locals())
+    r_data_frame: RDataFrame = r_cdms_products.climatic_summary(
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        station=r_params["station"],
+        elements=r_params["elements"],
+        year=r_params["year"],
+        month=r_params["month"],
+        dekad=r_params["dekad"],
+        pentad=r_params["pentad"],
+        to=r_params["to"],
+        by=r_params["by"],
+        doy=r_params["doy"],
+        doy_first=r_params["doy_first"],
+        doy_last=r_params["doy_last"],
+        summaries=r_params["summaries"],
+        na_rm=r_params["na_rm"],
+        na_prop=r_params["na_prop"],
+        na_n=r_params["na_n"],
+        na_consec=r_params["na_consec"],
+        na_n_non=r_params["na_n_non"],
+        first_date=r_params["first_date"],
+        n_dates=r_params["n_dates"],
+        last_date=r_params["last_date"],
         # summaries_params: r_summaries_params, TODO convert to R type 'list of lists'
-        names=names,
+        names=r_params["names"],
     )
 
-    # convert R data frame to pandas data frame
-    with conversion.localconverter(default_converter + pandas2ri.converter):
-        data_returned = conversion.rpy2py(r_data_returned)
+    return _get_data_frame(r_data_frame)
 
-    return data_returned
+
+def export_geoclim_month(
+    data: DataFrame,
+    year,
+    month,
+    element: str,
+    station_id,
+    latitude,
+    longitude,
+    metadata=None,
+    join_by=None,
+    add_cols=None,
+    file_path: str = None,
+    **kwargs
+) -> str:
+    # TODO if file_path is None then set it to "GEOCLIM-" + element + ".csv"
+    # TODO convert `kwargs`` to R parameters
+    pass
+
+
+def inventory_table(
+    data: DataFrame,
+    date_time: str,
+    elements: List,
+    station: str = None,
+    year: str = None,
+    month: str = None,
+    day: str = None,
+    missing_indicator: str = "M",
+    observed_indicator: str = "X",
+) -> DataFrame:
+
+    r_params = _get_r_params(locals())
+
+    # convert any 'POSIXt' type data in the data frame to the R 'Date' type
+    globalenv['df'] = r_params["data"]
+    df = r('data.frame(lapply(df, function(x) { if (inherits(x, "POSIXt")) as.Date(x) else x }))')
+
+    r_data_frame: RDataFrame = r_cdms_products.inventory_table(
+        data=df,
+        date_time=r_params["date_time"],
+        elements=r_params["elements"],
+        station=r_params["station"],
+        year=r_params["year"],
+        month=r_params["month"],
+        day=r_params["day"],
+        missing_indicator=r_params["missing_indicator"],
+        observed_indicator=r_params["observed_indicator"],
+    )
+    return _get_data_frame(r_data_frame)
 
 
 def timeseries_plot(
@@ -141,20 +174,27 @@ def timeseries_plot(
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
 
 
-def export_geoclim_month(
-    data: DataFrame,
-    year,
-    month,
-    element: str,
-    station_id,
-    latitude,
-    longitude,
-    metadata=None,
-    join_by=None,
-    add_cols=None,
-    file_path: str = None,
-    **kwargs
-) -> str:
-    # TODO if file_path is None then set it to "GEOCLIM-" + element + ".csv"
-    # TODO convert `kwargs`` to R parameters
-    pass
+def _get_r_params(params: Dict) -> Dict:
+    r_params: Dict = params.copy()
+
+    for key in r_params:
+        if r_params[key] is None:
+            r_params[key] = r_NULL
+        elif isinstance(r_params[key], List):
+            r_params[key] = StrVector(r_params[key])
+        elif isinstance(r_params[key], Dict):
+            names: List = list(r_params[key].keys())
+            r_params[key] = StrVector(list(r_params[key].values()))
+            r_params[key].names = names
+        elif isinstance(r_params[key], DataFrame):
+            with conversion.localconverter(default_converter + pandas2ri.converter):
+                r_params[key] = conversion.py2rpy(r_params[key])
+
+    return r_params
+
+
+def _get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
+    # convert R data frame to pandas data frame
+    with conversion.localconverter(default_converter + pandas2ri.converter):
+        data_frame: DataFrame = conversion.rpy2py(r_data_frame)
+    return data_frame
