@@ -1,8 +1,7 @@
+from cmath import atan
+import filecmp
 import os
-
-import pandas
 from pandas import DataFrame, read_csv
-
 from opencdms_process.process.rinstat import cdms_products
 
 TEST_DIR = os.path.dirname(__file__)
@@ -86,6 +85,58 @@ def test_climatic_summary():
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual030.csv")
 
 
+def test_inventory_plot():
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    output_path_actual: str = os.path.join(TEST_DIR, "results_actual")
+
+    # Create an inventory plot with two elements and by station
+    file_name_actual: str = "inventory_plot_actual010.jpg"
+    actual = cdms_products.inventory_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=data,
+        station="station_name",
+        elements=["tmax", "tmin"],
+        date_time="date",
+    )
+    assert __is_expected_jpg(file_name_actual)
+
+    # Create an inventory plot by year and day of year
+    # TODO Python plot has slightly more data than R plot
+    file_name_actual: str = "inventory_plot_actual020.jpg"
+    actual = cdms_products.inventory_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=data,
+        station="station_name",
+        elements=["tmax", "tmin"],
+        date_time="date",
+        year_doy_plot=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
+    # Can add in rainy/dry days into the plot
+    file_name_actual: str = "inventory_plot_actual030.jpg"
+    actual = cdms_products.inventory_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=data,
+        station="station_name",
+        elements=["tmax", "tmin"],
+        date_time="date",
+        rain="rain",
+        display_rain_days=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
+
 def test_inventory_table():
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
     data = read_csv(
@@ -165,6 +216,8 @@ def test_timeseries_plot():
         facet_by="stations",
     )
 
+    assert True
+
 
 def __is_expected_csv(data: DataFrame, file_name: str) -> bool:
 
@@ -185,3 +238,16 @@ def __is_expected_csv(data: DataFrame, file_name: str) -> bool:
     # return if actual equals expected
     diffs: DataFrame = actual_from_csv.compare(expected_from_csv)
     return diffs.empty
+
+
+def __is_expected_jpg(file_name: str) -> bool:
+    output_file_actual, output_file_expected = __get_output_file_paths(file_name)
+    return filecmp.cmp(output_file_actual, output_file_expected)
+
+
+def __get_output_file_paths(file_name: str):
+    output_file_actual: str = os.path.join(TEST_DIR, "results_actual", file_name)
+    output_file_expected: str = os.path.join(
+        TEST_DIR, "results_expected", file_name.replace("actual", "expected")
+    )
+    return output_file_actual, output_file_expected
