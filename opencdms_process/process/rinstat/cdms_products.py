@@ -14,88 +14,50 @@ from rpy2.robjects import r
 
 r_cdms_products = packages.importr("cdms.products")
 
+
 def climatic_extremes(
     data: DataFrame,
+    date_time,
+    elements,
+    station=None,
+    year=None,
+    month=None,
+    dekad=None,
+    pentad=None,
+    to: List = [
+        "hourly",
+        "daily",
+        "pentad",
+        "dekadal",
+        "monthly",
+        "annual-within-year",
+        "annual",
+        "longterm-monthly",
+        "longterm-within-year",
+        "station",
+        "overall",
+    ],
+    by=None,
+    doy=None,
+    doy_first=1,
+    doy_last=366,
+    max_val=True,
+    min_val=False,
+    first_date=False,
+    n_dates=False,
+    last_date=False,
+    na_rm=False,
+    na_prop=None,
+    na_n=None,
+    na_consec=None,
+    na_n_non=None,
+    names="{.fn}_{.col}",
 ) -> DataFrame:
     pass
+
 
 def climatic_missing(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def climatic_summary(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_cdt (
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_cdt_daily(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_cdt_dekad(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_climat_messages(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_climdex(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_geoclim(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_geoclim_dekad(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_geoclim_month(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def export_geoclim_pentad(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def histogram_plot(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def inventory_table(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def output_CPT(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def timeseries_plot(
-    data:DataFrame,
-) -> DataFrame:
-    pass
-
-def windrose(
-    data:DataFrame,
+    data: DataFrame, date_time, elements, stations, start=True, end=False
 ) -> DataFrame:
     pass
 
@@ -168,11 +130,130 @@ def climatic_summary(
     return _get_data_frame(r_data_frame)
 
 
-def export_geoclim_month(
+def export_cdt(
+    data: DataFrame,
+    station,
+    element,
+    latitude,
+    longitude,
+    altitude,
+    type: List = ["dekad", "daily"],
+    date_time=None,
+    year=None,
+    month=None,
+    dekad=None,
+    metadata=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("CDT-", element, ".csv")
+    pass
+
+
+def export_cdt_daily(
+    data: DataFrame,
+    station,
+    element,
+    date_time,
+    latitude,
+    longitude,
+    altitude,
+    metadata=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("CDT-", element, ".csv")
+    pass
+
+
+def export_cdt_dekad(
+    data: DataFrame,
+    station,
+    element,
+    date_time,
+    latitude,
+    longitude,
+    altitude,
+    year=None,
+    month=None,
+    dekad=None,
+    metadata=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("CDT-", element, ".csv")
+    pass
+
+
+def export_climat_messages(
+    data: DataFrame,
+    date_time,
+    station_id,
+    year=None,
+    month=None,
+    mean_pressure_station=None,
+    mean_pressure_reduced=None,
+    mean_temp=None,
+    mean_max_temp=None,
+    mean_min_temp=None,
+    mean_vapour_pressure=None,
+    total_precip=None,
+    total_sunshine=None,
+    total_snow_depth=None,
+    max_ws=None,
+    min_h_vis=None,
+    folder:str = None,
+) -> DataFrame:
+    #TODO folder=getwd()
+    pass
+
+
+def export_climdex(
+    data: DataFrame,
+    prcp,
+    tmax,
+    tmin,
+    date=None,
+    year=None,
+    month=None,
+    day=None,
+    file_type: List = ["csv", "txt"],
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("climdex-", Sys.Date())
+    pass
+
+
+def export_geoclim(
     data: DataFrame,
     year,
-    month,
-    element: str,
+    type_col,
+    element,
+    station_id,
+    latitude,
+    longitude,
+    type: List = ["dekad", "pentad"],
+    metadata=None,
+    join_by=None,
+    add_cols=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
+    pass
+
+
+def export_geoclim_dekad(
+    data: DataFrame,
+    year,
+    dekad,
+    element,
     station_id,
     latitude,
     longitude,
@@ -180,10 +261,79 @@ def export_geoclim_month(
     join_by=None,
     add_cols=None,
     file_path: str = None,
+    *args,
     **kwargs
-) -> str:
-    # TODO if file_path is None then set it to "GEOCLIM-" + element + ".csv"
-    # TODO convert `kwargs`` to R parameters
+):
+    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
+    pass
+
+
+def export_geoclim_month(
+    data: DataFrame,
+    year,
+    month,
+    element,
+    station_id,
+    latitude,
+    longitude,
+    metadata=None,
+    join_by=None,
+    add_cols=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
+    pass
+
+
+def export_geoclim_pentad(
+    data: DataFrame,
+    year,
+    pentad,
+    element,
+    station_id,
+    latitude,
+    longitude,
+    metadata=None,
+    join_by=None,
+    add_cols=None,
+    file_path: str = None,
+    *args,
+    **kwargs
+):
+    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
+    pass
+
+
+def histogram_plot(
+    data: DataFrame,
+    date_time,
+    elements,
+    station=None,
+    facet_by: List = [
+        "stations",
+        "elements",
+        "stations-elements",
+        "elements-stations",
+        "none",
+    ],
+    position: List = ["identity", "dodge", "dodge2", "stack", "fill", "layer"],
+    colour_bank=None,
+    plot_type: List = ["histogram", "density", "frequency"],
+    na_rm=False,
+    orientation=None,
+    show_legend=None,
+    width=None,
+    facet_nrow=None,
+    facet_ncol=None,
+    title="Histogram Plot",
+    x_title=None,
+    y_title=None,
+) -> DataFrame:
+    #TODO orientation=NA,
+    #TODO show_legend=NA,
+
     pass
 
 
@@ -232,7 +382,7 @@ def inventory_plot(
 ):
 
     r_params = _get_r_params(locals())
-    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
+    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
 
     # TODO facet_by \code{character(1)} Whether to facet by stations, elements, or both. Options are \code{"stations"}, \code{"elements"}, \code{"station-elements"}, \code{"elements-stations"}.
     #   In \code{"station-elements"}, stations are given as rows and elements as columns. In \code{"elements-stations"}, elements are given as rows and stations as columns.
@@ -342,6 +492,21 @@ def inventory_table(
     return _get_data_frame(r_data_frame)
 
 
+def output_CPT(
+    data: DataFrame,
+    lat_lon_data,
+    station_latlondata,
+    latitude,
+    longitude,
+    station,
+    year,
+    element,
+    long_data=True,
+    na_code=-999,
+) -> DataFrame:
+    pass
+
+
 def timeseries_plot(
     path: str,
     file_name: str,
@@ -386,6 +551,25 @@ def timeseries_plot(
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
 
 
+def windrose(
+    data: DataFrame,
+    speed,
+    direction,
+    facet_by=None,
+    n_directions=12,
+    n_speeds=5,
+    speed_cuts: List[float] = [],
+    col_pal="GnBu",
+    ggtheme: List = ["grey", "gray", "bw", "linedraw", "light", "minimal", "classic"],
+    legend_title="Wind Speed",
+    calm_wind=0,
+    variable_wind=990,
+    n_col=None,
+) -> DataFrame:
+    # TODO speed_cuts = NA
+    pass
+
+
 def _get_r_params(params: Dict) -> Dict:
     r_params: Dict = params.copy()
 
@@ -393,6 +577,7 @@ def _get_r_params(params: Dict) -> Dict:
         if r_params[key] is None:
             r_params[key] = r_NULL
         elif isinstance(r_params[key], List):
+            # TODO add support for float vectors, needed for windrose speed_cuts parameter
             r_params[key] = StrVector(r_params[key])
         # elif isinstance(r_params[key], Dict):
         # TODO replace with single line like 'x = robjects.ListVector({'a': 1, 'b': 2, 'c': 3})', see https://rpy2.github.io/doc/v3.4.x/html/vector.html#creating-vectors
@@ -415,7 +600,7 @@ def _get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
     return data_frame
 
 
-def __convert_posixt_to_r_date(r_data):
+def _convert_posixt_to_r_date(r_data):
     globalenv["df"] = r_data
     return r(
         'data.frame(lapply(df, function(x) { if (inherits(x, "POSIXt")) as.Date(x) else x }))'
