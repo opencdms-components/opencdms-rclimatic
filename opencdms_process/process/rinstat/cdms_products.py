@@ -11,9 +11,8 @@ from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects import r
 
-
 r_cdms_products = packages.importr("cdms.products")
-
+r_ggplot2 = packages.importr("ggplot2")
 
 def climatic_extremes(
     data: DataFrame,
@@ -41,7 +40,34 @@ def climatic_extremes(
     na_n_non: integer = None,
     names="{.fn}_{.col}",
 ) -> DataFrame:
-    pass
+    r_params = _get_r_params(locals())
+    r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        elements=r_params["elements"],
+        station=r_params["station"],
+        year=r_params["year"],
+        month=r_params["month"],
+        dekad=r_params["dekad"],
+        pentad=r_params["pentad"],
+        to=r_params["to"],
+        by=r_params["by"],
+        doy=r_params["doy"],
+        doy_first=r_params["doy_first"],
+        doy_last=r_params["doy_last"],
+        max_val=r_params["max_val"],
+        min_val=r_params["min_val"],
+        first_date=r_params["first_date"],
+        n_dates=r_params["n_dates"],
+        last_date=r_params["last_date"],
+        na_rm=r_params["na_rm"],
+        na_prop=r_params["na_prop"],
+        na_n=r_params["na_n"],
+        na_consec=r_params["na_consec"],
+        na_n_non=r_params["na_n_non"],
+        names=r_params["names"],
+    )
+    return _get_data_frame(r_data_frame)
 
 
 def climatic_missing(
@@ -52,7 +78,16 @@ def climatic_missing(
     start: bool = True, 
     end: bool = False,
 ) -> DataFrame:
-    pass
+    r_params = _get_r_params(locals())
+    r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        elements=r_params["elements"],
+        stations=r_params["stations"],
+        start=r_params["start"],
+        end=r_params["end"],
+    )
+    return _get_data_frame(r_data_frame)
 
 
 def climatic_summary(
@@ -136,7 +171,23 @@ def export_cdt(
     **kwargs
 ):
     # TODO file_path = paste0("CDT-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_cdt(
+        data=r_params["data"],
+        station=r_params["station"],
+        element=r_params["element"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        altitude=r_params["altitude"],
+        type=r_params["type"],
+        date_time=r_params["date_time"],
+        year=r_params["year"],
+        month=r_params["month"],
+        dekad=r_params["dekad"],
+        metadata=r_params["metadata"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_cdt_daily(
@@ -153,7 +204,19 @@ def export_cdt_daily(
     **kwargs
 ):
     # TODO file_path = paste0("CDT-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_cdt_daily(
+        data=r_params["data"],
+        station=r_params["station"],
+        element=r_params["element"],
+        date_time=r_params["date_time"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        altitude=r_params["altitude"],
+        metadata=r_params["metadata"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_cdt_dekad(
@@ -173,7 +236,22 @@ def export_cdt_dekad(
     **kwargs
 ):
     # TODO file_path = paste0("CDT-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_cdt_dekad(
+        data=r_params["data"],
+        station=r_params["station"],
+        element=r_params["element"],
+        date_time=r_params["date_time"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        altitude=r_params["altitude"],
+        year=r_params["year"],
+        month=r_params["month"],
+        dekad=r_params["dekad"],
+        metadata=r_params["metadata"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_climat_messages(
@@ -196,7 +274,26 @@ def export_climat_messages(
     folder:str = None,
 ):
     #TODO folder=getwd()
-    pass
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_climat_messages(
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        station_id=r_params["station_id"],
+        year=r_params["year"],
+        month=r_params["month"],
+        mean_pressure_station=r_params["mean_pressure_station"],
+        mean_pressure_reduced=r_params["mean_pressure_reduced"],
+        mean_temp=r_params["mean_temp"],
+        mean_max_temp=r_params["mean_max_temp"],
+        mean_min_temp=r_params["mean_min_temp"],
+        mean_vapour_pressure=r_params["mean_vapour_pressure"],
+        total_precip=r_params["total_precip"],
+        total_sunshine=r_params["total_sunshine"],
+        total_snow_depth=r_params["total_snow_depth"],
+        max_ws=r_params["max_ws"],
+        min_h_vis=r_params["min_h_vis"],
+        folder=r_params["folder"],
+    )
 
 
 def export_climdex(
@@ -214,7 +311,20 @@ def export_climdex(
     **kwargs
 ):
     # TODO file_path = paste0("climdex-", Sys.Date())
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_climdex(
+        data=r_params["data"],
+        prcp=r_params["prcp"],
+        tmax=r_params["tmax"],
+        tmin=r_params["tmin"],
+        date=r_params["date"],
+        year=r_params["year"],
+        month=r_params["month"],
+        day=r_params["day"],
+        file_type=r_params["file_type"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_geoclim(
@@ -234,7 +344,22 @@ def export_geoclim(
     **kwargs
 ):
     # TODO file_path = paste0("GEOCLIM-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_geoclim(
+        data=r_params["data"],
+        year=r_params["year"],
+        type_col=r_params["type_col"],
+        element=r_params["element"],
+        station_id=r_params["station_id"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        type=r_params["type"],
+        metadata=r_params["metadata"],
+        join_by=r_params["join_by"],
+        add_cols=r_params["add_cols"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_geoclim_dekad(
@@ -253,7 +378,21 @@ def export_geoclim_dekad(
     **kwargs
 ):
     # TODO file_path = paste0("GEOCLIM-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_geoclim_dekad(
+        data=r_params["data"],
+        year=r_params["year"],
+        dekad=r_params["dekad"],
+        element=r_params["element"],
+        station_id=r_params["station_id"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        metadata=r_params["metadata"],
+        join_by=r_params["join_by"],
+        add_cols=r_params["add_cols"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_geoclim_month(
@@ -272,7 +411,21 @@ def export_geoclim_month(
     **kwargs
 ):
     # TODO file_path = paste0("GEOCLIM-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_geoclim_month(
+        data=r_params["data"],
+        year=r_params["year"],
+        month=r_params["month"],
+        element=r_params["element"],
+        station_id=r_params["station_id"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        metadata=r_params["metadata"],
+        join_by=r_params["join_by"],
+        add_cols=r_params["add_cols"],
+        file_path=r_params["file_path"],
+    )
 
 
 def export_geoclim_pentad(
@@ -291,10 +444,26 @@ def export_geoclim_pentad(
     **kwargs
 ):
     # TODO file_path = paste0("GEOCLIM-", element, ".csv")
-    pass
+    # TODO forward args and kwargs to R function
+    r_params = _get_r_params(locals())
+    r_cdms_products.export_geoclim_pentad(
+        data=r_params["data"],
+        year=r_params["year"],
+        pentad=r_params["pentad"],
+        element=r_params["element"],
+        station_id=r_params["station_id"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        metadata=r_params["metadata"],
+        join_by=r_params["join_by"],
+        add_cols=r_params["add_cols"],
+        file_path=r_params["file_path"],
+    )
 
 
 def histogram_plot(
+    path: str,
+    file_name: str,
     data: DataFrame,
     date_time: str,
     elements: List[str],
@@ -315,8 +484,35 @@ def histogram_plot(
 ):
     #TODO orientation=NA,
     #TODO show_legend=NA,
-
-    pass
+    r_params = _get_r_params(locals())
+    r_plot = r_cdms_products.histogram_plot(
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        elements=r_params["elements"],
+        station=r_params["station"],
+        facet_by=r_params["facet_by"],
+        position=r_params["position"],
+        colour_bank=r_params["colour_bank"],
+        plot_type=r_params["plot_type"],
+        na_rm=r_params["na_rm"],
+        orientation=r_params["orientation"],
+        show_legend=r_params["show_legend"],
+        width=r_params["width"],
+        facet_nrow=r_params["facet_nrow"],
+        facet_ncol=r_params["facet_ncol"],
+        title=r_params["title"],
+        x_title=r_params["x_title"],
+        y_title=r_params["y_title"],
+    )
+    r_ggplot2.ggsave(
+        filename=file_name,
+        plot=r_plot,
+        device="jpeg",
+        path=path,
+        width=25,
+        height=20,
+        units="cm",
+    )
 
 
 def inventory_plot(
@@ -373,7 +569,6 @@ def inventory_plot(
     #   or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})?
 
     # TODO translate none null facet margin parameters to R ggplot margin types
-    r_ggplot2 = packages.importr("ggplot2")
     if r_params["facet_x_margin"] == r_NULL:
         r_params["facet_x_margin"] = r_ggplot2.margin(1, 0, 1, 0)
     if r_params["facet_y_margin"] == r_NULL:
@@ -453,15 +648,9 @@ def inventory_table(
 ) -> DataFrame:
 
     r_params = _get_r_params(locals())
-
-    # convert any 'POSIXt' type data in the data frame to the R 'Date' type
-    globalenv["df"] = r_params["data"]
-    df = r(
-        'data.frame(lapply(df, function(x) { if (inherits(x, "POSIXt")) as.Date(x) else x }))'
-    )
-
+    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
     r_data_frame: RDataFrame = r_cdms_products.inventory_table(
-        data=df,
+        data=r_params["data"],
         date_time=r_params["date_time"],
         elements=r_params["elements"],
         station=r_params["station"],
@@ -486,7 +675,20 @@ def output_CPT(
     long_data: bool = True,
     na_code:int=-999,
 ) -> DataFrame:
-    pass
+    r_params = _get_r_params(locals())
+    r_data_frame: RDataFrame = r_cdms_products.output_CPT(
+        data=r_params["data"],
+        lat_lon_data=r_params["lat_lon_data"],
+        station_latlondata=r_params["station_latlondata"],
+        latitude=r_params["latitude"],
+        longitude=r_params["longitude"],
+        station=r_params["station"],
+        year=r_params["year"],
+        element=r_params["element"],
+        long_data=r_params["long_data"],
+        na_code=r_params["na_code"],
+    )
+    return _get_data_frame(r_data_frame)
 
 
 def timeseries_plot(
@@ -511,29 +713,32 @@ def timeseries_plot(
 ):
     # TODO ensure show_legend nan converted to R NA
     # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python and JS?
-    # TODO `facet_by` must be one of ("stations", "elements", "stations-elements", "elements-stations", "none")
-    # TODO `type` must be one of ("line", "bar")
 
-    station = r_NULL if station is None else station
-    x_title = r_NULL if x_title is None else x_title
-    y_title = r_NULL if y_title is None else y_title
-    with conversion.localconverter(default_converter + pandas2ri.converter):
-        r_data = conversion.py2rpy(data)
-
-    r_cdms_products = packages.importr("cdms.products")
+    r_params = _get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
-        data=r_data,
-        date_time=date_time,
-        elements=elements,
-        station=station,
-        facet_by=facet_by,
+        data=r_params["data"],
+        date_time=r_params["date_time"],
+        elements=r_params["elements"],
+        station=r_params["station"],
+        facet_by=r_params["facet_by"],
+        type=r_params["type"],
+        add_points=r_params["add_points"],
+        add_line_of_best_fit=r_params["add_line_of_best_fit"],
+        se=r_params["se"],
+        add_path=r_params["add_path"],
+        add_step=r_params["add_step"],
+        na_rm=r_params["na_rm"],
+        show_legend=r_params["show_legend"],
+        title=r_params["title"],
+        x_title=r_params["x_title"],
+        y_title=r_params["y_title"],
     )
-
-    r_ggplot2 = packages.importr("ggplot2")
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
 
 
 def windrose(
+    path:str,
+    file_name:str,
     data: DataFrame,
     speed:List[float],
     direction:List[float],
@@ -549,7 +754,31 @@ def windrose(
     n_col:int=None,
 ):
     # TODO speed_cuts = NA
-    pass
+    r_params = _get_r_params(locals())
+    r_plot = r_cdms_products.windrose(
+        data=r_params["data"],
+        speed=r_params["speed"],
+        direction=r_params["direction"],
+        facet_by=r_params["facet_by"],
+        n_directions=r_params["n_directions"],
+        n_speeds=r_params["n_speeds"],
+        speed_cuts=r_params["speed_cuts"],
+        col_pal=r_params["col_pal"],
+        ggtheme=r_params["ggtheme"],
+        legend_title=r_params["legend_title"],
+        calm_wind=r_params["calm_wind"],
+        variable_wind=r_params["variable_wind"],
+        n_col=r_params["n_col"],
+    )
+    r_ggplot2.ggsave(
+        filename=file_name,
+        plot=r_plot,
+        device="jpeg",
+        path=path,
+        width=25,
+        height=20,
+        units="cm",
+    )
 
 
 def _get_r_params(params: Dict) -> Dict:
