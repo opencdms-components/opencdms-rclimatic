@@ -84,6 +84,27 @@ def test_climatic_summary():
     )
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual030.csv")
 
+    """ test with data used in demo
+    """
+    data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["obsDatetime"],
+        dayfirst=True,
+        na_values="NA",
+    )
+    # climatic_summary(data = obs, date_time = "obsDatetime", station = "ï..recordedFrom", elements = "obsValue", 
+    #       to = "annual", summaries = c(mean = "mean", max = "max", min = "min"))
+    actual = cdms_products.climatic_summary(
+        data=data,
+        date_time="obsDatetime",
+        elements=["obsValue"],
+        station="recordedFrom",
+        to="annual",
+        summaries={"mean": "mean", "max": "max", "min": "min"},
+    )
+    assert __is_expected_csv(data=actual, file_name="climatic_summary_actual040.csv")
+
 
 def test_inventory_plot():
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
@@ -133,6 +154,26 @@ def test_inventory_plot():
         date_time="date",
         rain="rain",
         display_rain_days=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
+    # test with data used in demo
+    data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
+    data = read_csv(
+        data_file,
+        parse_dates=["obsDatetime"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    file_name_actual: str = "inventory_plot_actual040.jpg"
+    actual = cdms_products.inventory_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=data,
+        station="recordedFrom",
+        elements=["obsValue"],
+        date_time="obsDatetime",
     )
     assert __is_expected_jpg(file_name_actual)
 

@@ -14,6 +14,91 @@ from rpy2.robjects import r
 
 r_cdms_products = packages.importr("cdms.products")
 
+def climatic_extremes(
+    data: DataFrame,
+) -> DataFrame:
+    pass
+
+def climatic_missing(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def climatic_summary(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_cdt (
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_cdt_daily(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_cdt_dekad(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_climat_messages(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_climdex(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_geoclim(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_geoclim_dekad(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_geoclim_month(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def export_geoclim_pentad(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def histogram_plot(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def inventory_table(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def output_CPT(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def timeseries_plot(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
+def windrose(
+    data:DataFrame,
+) -> DataFrame:
+    pass
+
 
 def climatic_summary(
     data: DataFrame,
