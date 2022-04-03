@@ -471,7 +471,6 @@ def histogram_plot(
     facet_by:str = "stations",
     position: str="identity",
     colour_bank:str=None,
-    plot_type: str="histogram",
     na_rm: bool = False,
     orientation:str=None,
     show_legend:bool=None,
@@ -493,10 +492,9 @@ def histogram_plot(
         facet_by=r_params["facet_by"],
         position=r_params["position"],
         colour_bank=r_params["colour_bank"],
-        plot_type=r_params["plot_type"],
         na_rm=r_params["na_rm"],
-        orientation=r_params["orientation"],
-        show_legend=r_params["show_legend"],
+        #orientation=r_params["orientation"],
+        #show_legend=r_params["show_legend"],
         width=r_params["width"],
         facet_nrow=r_params["facet_nrow"],
         facet_ncol=r_params["facet_ncol"],
@@ -520,7 +518,7 @@ def inventory_plot(
     file_name: str,
     data: DataFrame,
     date_time: str,
-    elements: List[str] = [],
+    elements: List[str],
     station: str = None,
     year: str = None,
     doy: str = None,
@@ -561,12 +559,6 @@ def inventory_plot(
 
     r_params = _get_r_params(locals())
     r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
-
-    # TODO facet_by \code{character(1)} Whether to facet by stations, elements, or both. Options are \code{"stations"}, \code{"elements"}, \code{"station-elements"}, \code{"elements-stations"}.
-    #   In \code{"station-elements"}, stations are given as rows and elements as columns. In \code{"elements-stations"}, elements are given as rows and stations as columns.
-
-    # TODO facet_scales \code{character(1)} Are scales shared across all facets (the default, \code{"fixed"}),
-    #   or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})?
 
     # TODO translate none null facet margin parameters to R ggplot margin types
     if r_params["facet_x_margin"] == r_NULL:
@@ -712,7 +704,6 @@ def timeseries_plot(
     y_title: str = None,
 ):
     # TODO ensure show_legend nan converted to R NA
-    # TODO this function returns a ggplot2 object. How can we convert this into a type that is useful in Python and JS?
 
     r_params = _get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
@@ -790,13 +781,6 @@ def _get_r_params(params: Dict) -> Dict:
         elif isinstance(r_params[key], List):
             # TODO add support for float vectors, needed for windrose speed_cuts parameter
             r_params[key] = StrVector(r_params[key])
-        # elif isinstance(r_params[key], Dict):
-        # TODO replace with single line like 'x = robjects.ListVector({'a': 1, 'b': 2, 'c': 3})', see https://rpy2.github.io/doc/v3.4.x/html/vector.html#creating-vectors
-        # r_params[key] = ListVector(r_params[key])
-
-        # names: List = list(r_params[key].keys())
-        # r_params[key] = StrVector(list(r_params[key].values()))
-        # r_params[key].names = names
         elif isinstance(r_params[key], DataFrame):
             with conversion.localconverter(default_converter + pandas2ri.converter):
                 r_params[key] = conversion.py2rpy(r_params[key])
