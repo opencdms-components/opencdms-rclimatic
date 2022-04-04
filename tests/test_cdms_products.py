@@ -25,7 +25,7 @@ def test_climatic_extremes():
         month="month",
         to="monthly",
         station="station_name",
-        elements="tmax",
+        elements=["tmax"],
         max_val=True,
         min_val=True,
     )
@@ -40,7 +40,7 @@ def test_climatic_extremes():
         month="month",
         to="monthly",
         station="station_name",
-        elements="tmax",
+        elements=["tmax"],
         max_val=True,
         first_date=True,
         n_dates=True,
@@ -50,7 +50,25 @@ def test_climatic_extremes():
 
 
 def test_climatic_missing():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # Summarising missing data in the rainfall, temperature, and sun columns
+    # climatic_missing(data = daily_niger, date_time = "date",
+    #                  elements = c("rain", "tmax", "tmin", "sunh"),
+    #                  station_id = "station_name")
+    actual = cdms_products.climatic_missing(
+        data=daily_niger,
+        date_time="date",
+        elements=["rain", "tmax", "tmin", "sunh"],
+        station_id="station_name",
+    )
+    assert __is_expected_csv(data=actual, file_name="climatic_missing_actual010.csv")
 
 
 def test_climatic_summary():
@@ -84,7 +102,7 @@ def test_climatic_summary():
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual010.csv")
 
     # test approx 55000 row dataframe with missing values
-    
+
     data_file: str = os.path.join(TEST_DIR, "data", "rwanda.csv")
     data = read_csv(
         data_file,
@@ -105,7 +123,7 @@ def test_climatic_summary():
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual020.csv")
 
     # run selection of package `testhat` tests
-    
+
     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
     data = read_csv(
         data_file,
@@ -126,9 +144,9 @@ def test_climatic_summary():
         summaries={"mean": "mean", "st_dv": "sd", "n_na": "naflex::na_n"},
     )
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual030.csv")
-    
+
     # test with data used in demo
-    
+
     data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
     data = read_csv(
         data_file,
@@ -211,7 +229,7 @@ def test_histogram_plot():
         file_name=file_name_actual,
         data=niger50,
         date_time="date",
-        elements="tmax",
+        elements=["tmax"],
         station="station_name",
         facet_by="stations",
     )
@@ -226,7 +244,7 @@ def test_histogram_plot():
         file_name=file_name_actual,
         data=agades,
         date_time="date",
-        elements="tmax",
+        elements=["tmax"],
         facet_by="none",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -240,7 +258,7 @@ def test_histogram_plot():
         file_name=file_name_actual,
         data=niger50,
         date_time="date",
-        elements="tmax",
+        elements=["tmax"],
         station="station_name",
         facet_by="none",
     )
@@ -256,7 +274,7 @@ def test_histogram_plot():
         file_name=file_name_actual,
         data=agades,
         date_time="date",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         facet_by="none",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -271,7 +289,7 @@ def test_histogram_plot():
         file_name=file_name_actual,
         data=agades,
         date_time="date",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         station="station_name",
         facet_by="elements",
     )
@@ -289,7 +307,7 @@ def test_histogram_plot():
         data=niger50,
         date_time="date",
         station="station_name",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         facet_by="stations-elements",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -306,7 +324,7 @@ def test_histogram_plot():
         data=niger50,
         date_time="date",
         station="station_name",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         facet_by="elements",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -323,7 +341,7 @@ def test_histogram_plot():
         data=niger50,
         date_time="date",
         station="station_name",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         facet_by="stations",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -340,7 +358,7 @@ def test_histogram_plot():
         data=niger50,
         date_time="date",
         station="station_name",
-        elements=["tmin","tmax"],
+        elements=["tmin", "tmax"],
         facet_by="none",
     )
     assert __is_expected_jpg(file_name_actual)
@@ -426,10 +444,10 @@ def test_inventory_plot():
 
     # TODO This test previously passed but now fails with the error:
     # >               raise embedded.RRuntimeError(_rinterface._geterrmessage())
-    # E               rpy2.rinterface_lib.embedded.RRuntimeError: Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  : 
+    # E               rpy2.rinterface_lib.embedded.RRuntimeError: Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  :
     # E                 Can't melt data.frames with non-atomic 'measure' columns
     # The 'measure' column is 'obsdataTime'. It seems to think that this column contains non-atomic data.
-    # I tried to test in R studio. It did not raise an error, but it gave me a blank plot 
+    # I tried to test in R studio. It did not raise an error, but it gave me a blank plot
     """ file_name_actual: str = "inventory_plot_actual040.jpg"
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
@@ -501,7 +519,37 @@ def test_inventory_table():
 
 
 def test_output_CPT():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "yearly_niger.csv")
+    yearly_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # Create summary data
+    # yearly_niger <- daily_niger %>% dplyr::group_by(station_name, year) %>%
+    #     dplyr::summarise(mean_rain = mean(rain))
+    # output_CPT(data = yearly_niger, lat_lon_data = stations_niger,
+    #            station_latlondata = "station_name", latitude = "lat", longitude = "long",
+    #            station = "station_name", year = "year", element = "mean_rain")
+    actual = cdms_products.output_CPT(
+        data=yearly_niger,
+        lat_lon_data=stations_niger,
+        station_latlondata="station_name",
+        latitude="lat",
+        longitude="long",
+        station="station_name",
+        year="year",
+        element="mean_rain",
+    )
+    assert __is_expected_csv(data=actual, file_name="output_CPT_actual010.csv")
 
 
 def test_timeseries_plot():
@@ -521,93 +569,264 @@ def test_timeseries_plot():
         na_values="NA",
     )
 
+    # test_that("single element facet by station graphs are correct", {
+    #   t1 <- timeseries_plot(data = niger50, date_time = "date", elements = "tmax",
+    #                    station = "station_name", facet_by = "stations")
     file_name_actual: str = "timeseries_plot_actual010.jpg"
     actual = cdms_products.timeseries_plot(
         path=output_path_actual,
         file_name=file_name_actual,
         data=niger50,
         date_time="date",
-        elements="tmax",
+        elements=["tmax"],
         station="station_name",
         facet_by="stations",
     )
     assert __is_expected_jpg(file_name_actual)
 
-    # test_that("single element facet by station graphs are correct", {
-    #   t1 <- timeseries_plot(data = niger50, date_time = "date", elements = "tmax", 
-    #                    station = "station_name", facet_by = "stations")
-
     # test_that("single element single station graphs are correct", {
-    #   t1 <- timeseries_plot(data = agades, date_time = "date", elements = "tmax", 
+    #   t1 <- timeseries_plot(data = agades, date_time = "date", elements = "tmax",
     #                    facet_by = "none")
+    file_name_actual: str = "timeseries_plot_actual020.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmax"],
+        facet_by="none",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("single element single station bar graphs are correct", {
-    #   t1 <- timeseries_plot(data = agades, date_time = "date", elements = "tmax", 
+    #   t1 <- timeseries_plot(data = agades, date_time = "date", elements = "tmax",
     #                    facet_by = "none", type = "bar")
+    file_name_actual: str = "timeseries_plot_actual030.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmax"],
+        facet_by="stations",
+        type="bar",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("single element colour by station no facet graphs are correct", {
-    #   t1 <- timeseries_plot(data = niger50, date_time = "date", elements = "tmax", 
+    #   t1 <- timeseries_plot(data = niger50, date_time = "date", elements = "tmax",
     #                    station = "station_name", facet_by = "none")
+    file_name_actual: str = "timeseries_plot_actual040.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmax"],
+        station="station_name",
+        facet_by="none",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element single station graphs are correct", {
-    #   t1 <- timeseries_plot(data = agades, date_time = "date", 
-    #                    elements = c("tmin", "tmax"), 
+    #   t1 <- timeseries_plot(data = agades, date_time = "date",
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "none")
+    file_name_actual: str = "timeseries_plot_actual050.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        facet_by="none",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element single station facet by elements graphs are correct", {
-    #   t1 <- timeseries_plot(data = agades, date_time = "date", 
-    #                    elements = c("tmin", "tmax"), 
+    #   t1 <- timeseries_plot(data = agades, date_time = "date",
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "elements")
+    file_name_actual: str = "timeseries_plot_actual060.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        facet_by="elements",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element & multiple stations with both as facet_by graphs are correct", {
     #   t1 <- timeseries_plot(data = niger50, date_time = "date",
     #                    station = "station_name",
-    #                    elements = c("tmin", "tmax"), 
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "stations-elements")
+    file_name_actual: str = "timeseries_plot_actual070.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        station="station_name",
+        facet_by="stations-elements",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element & multiple stations facet by elements graphs are correct", {
     #   t1 <- timeseries_plot(data = niger50, date_time = "date",
     #                    station = "station_name",
-    #                    elements = c("tmin", "tmax"), 
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "elements")
+    file_name_actual: str = "timeseries_plot_actual080.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        station="station_name",
+        facet_by="elements",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element & multiple stations facet by stations graphs are correct", {
     #   t1 <- timeseries_plot(data = niger50, date_time = "date",
     #                    station = "station_name",
-    #                    elements = c("tmin", "tmax"), 
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "stations")
+    file_name_actual: str = "timeseries_plot_actual090.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        station="station_name",
+        facet_by="stations",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("multiple element & multiple stations no facet graphs are correct", {
     #   t1 <- timeseries_plot(data = niger50, date_time = "date",
     #                    station = "station_name",
-    #                    elements = c("tmin", "tmax"), 
+    #                    elements = c("tmin", "tmax"),
     #                    facet_by = "none")
+    file_name_actual: str = "timeseries_plot_actual100.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmin", "tmax"],
+        station="station_name",
+        facet_by="none",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("points, LOBF, path and step are correctly added", {
-    #   t1_points <- timeseries_plot(data = agades, date_time = "date", 
+    #   t1_points <- timeseries_plot(data = agades, date_time = "date",
     #                                facet_by = "none",
     #                                elements = "tmin", add_points = TRUE)
+    file_name_actual: str = "timeseries_plot_actual110.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin"],
+        facet_by="none",
+        add_points=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
     #   t1_lobf <- timeseries_plot(data = agades, date_time = "date",
     #                              facet_by = "none",
     #                              elements = "tmin", add_line_of_best_fit = TRUE)
+    file_name_actual: str = "timeseries_plot_actual120.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin"],
+        facet_by="none",
+        add_line_of_best_fit=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
     #   t1_path <- timeseries_plot(data = agades, date_time = "date",
     #                              facet_by = "none",
     #                              elements = "tmin", add_path = TRUE)
+    file_name_actual: str = "timeseries_plot_actual130.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin"],
+        facet_by="none",
+        add_path=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
+
     #   t1_step <- timeseries_plot(data = agades, date_time = "date",
     #                              facet_by = "none",
     #                              elements = "tmin", add_step = TRUE)
+    file_name_actual: str = "timeseries_plot_actual140.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=agades,
+        date_time="date",
+        elements=["tmin"],
+        facet_by="none",
+        add_step=True,
+    )
+    assert __is_expected_jpg(file_name_actual)
 
     # test_that("facet warning is displayed", {
-    #   expect_warning(timeseries_plot(data = niger50, date_time = "date", elements = "tmax", 
+    #   expect_warning(timeseries_plot(data = niger50, date_time = "date", elements = "tmax",
     #                  facet_by = "stations"))
+    file_name_actual: str = "timeseries_plot_actual150.jpg"
+    actual = cdms_products.timeseries_plot(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=niger50,
+        date_time="date",
+        elements=["tmax"],
+        facet_by="stations",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
 
 def test_windrose():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # windrose_plot <- windrose(data = daily_niger, speed = "ws", direction = "wd",
+    #                           facet_by = "station_name")
+    file_name_actual: str = "windrose_actual010.jpg"
+    actual = cdms_products.windrose(
+        path=output_path_actual,
+        file_name=file_name_actual,
+        data=daily_niger,
+        speed="ws",
+        direction="wd",
+        facet_by="station_name",
+    )
+    assert __is_expected_jpg(file_name_actual)
 
 
 def __is_expected_csv(data: DataFrame, file_name: str) -> bool:
-    #TODO use __get_output_file_paths
+    # TODO use __get_output_file_paths
 
     # write the actual results to csv file, and then read the results back in again
     # Note:We read the expected results from a csv file. Writing/reading this file may change the

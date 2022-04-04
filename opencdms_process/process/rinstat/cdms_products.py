@@ -74,7 +74,7 @@ def climatic_missing(
     data: DataFrame, 
     date_time: str, 
     elements: List[str], 
-    stations:str, 
+    station_id:str = None, 
     start: bool = True, 
     end: bool = False,
 ) -> DataFrame:
@@ -83,7 +83,7 @@ def climatic_missing(
         data=r_params["data"],
         date_time=r_params["date_time"],
         elements=r_params["elements"],
-        stations=r_params["stations"],
+        station_id=r_params["station_id"],
         start=r_params["start"],
         end=r_params["end"],
     )
@@ -688,7 +688,7 @@ def timeseries_plot(
     file_name: str,
     data: DataFrame,
     date_time: str,
-    elements: str,
+    elements: List[str],
     station: str = None,
     facet_by: str = "stations",
     type: str = "line",
