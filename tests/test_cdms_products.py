@@ -186,7 +186,7 @@ def test_export_cdt():
 
     # export_cdt(date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
     #            metadata = stations_niger)
-    '''actual = cdms_products.export_cdt(
+    """actual = cdms_products.export_cdt(
         data=daily_niger,
         date_time="date",
         element="rain",
@@ -196,7 +196,7 @@ def test_export_cdt():
         altitude="alt",
         metadata=stations_niger,
     )
-    assert __is_expected_csv(data=actual, file_name="output_export_cdt010.csv")'''
+    assert __is_expected_csv(data=actual, file_name="output_export_cdt010.csv")"""
 
 
 def test_export_cdt_daily():
@@ -469,31 +469,6 @@ def test_inventory_plot():
         dayfirst=True,
         na_values="NA",
     )
-
-    # TODO This test previously passed but now fails with the error:
-    # >               raise embedded.RRuntimeError(_rinterface._geterrmessage())
-    # E               rpy2.rinterface_lib.embedded.RRuntimeError: Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  :
-    # E                 Can't melt data.frames with non-atomic 'measure' columns
-    # The 'measure' column is 'obsdataTime'. It seems to think that this column contains non-atomic data.
-    # I tested with the R command line in Linux.
-    # This gave me the following error:
-    # Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  : 
-    #    Can't melt data.frames with non-atomic 'measure' columns
-    #    In addition: Warning message:
-    #    Values from `obsValue` are not uniquely identified; output will contain list-cols.
-    # therefore the error is not in the Python wrapper, it seems to bee a problem related to reading the data frame from csv file 
-    # (it seems to interpret the numerical observations as non-numeric). It's not worth spending time fixing this so I'll delete the test
-
-    """ file_name_actual: str = "inventory_plot_actual040.jpg"
-    actual = cdms_products.inventory_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=data,
-        station="recordedFrom",
-        elements=["obsValue"],
-        date_time="obsDatetime",
-    )
-    assert __is_expected_jpg(file_name_actual) """
 
 
 def test_inventory_table():
