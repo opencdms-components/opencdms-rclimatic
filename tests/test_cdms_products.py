@@ -854,20 +854,16 @@ def test_windrose():
 
 
 def __is_expected_csv(data: DataFrame, file_name: str) -> bool:
-    # TODO use __get_output_file_paths
+    output_file_actual, output_file_expected = __get_output_file_paths(file_name)
 
     # write the actual results to csv file, and then read the results back in again
     # Note:We read the expected results from a csv file. Writing/reading this file may change the
     #      data frame's meta data. Therefore, we must also write/read the actual results to csv so
     #      that we are comparing like with like.
-    output_file_actual: str = os.path.join(TEST_DIR, "results_actual", file_name)
     data.to_csv(output_file_actual, index=False)
     actual_from_csv: DataFrame = read_csv(output_file_actual)
 
     # read the expected reults from csv file
-    output_file_expected: str = os.path.join(
-        TEST_DIR, "results_expected", file_name.replace("actual", "expected")
-    )
     expected_from_csv: DataFrame = read_csv(output_file_expected)
 
     # return if actual equals expected
