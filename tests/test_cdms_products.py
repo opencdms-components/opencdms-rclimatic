@@ -475,7 +475,15 @@ def test_inventory_plot():
     # E               rpy2.rinterface_lib.embedded.RRuntimeError: Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  :
     # E                 Can't melt data.frames with non-atomic 'measure' columns
     # The 'measure' column is 'obsdataTime'. It seems to think that this column contains non-atomic data.
-    # I tried to test in R studio. It did not raise an error, but it gave me a blank plot
+    # I tested with the R command line in Linux.
+    # This gave me the following error:
+    # Error in melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind -  : 
+    #    Can't melt data.frames with non-atomic 'measure' columns
+    #    In addition: Warning message:
+    #    Values from `obsValue` are not uniquely identified; output will contain list-cols.
+    # therefore the error is not in the Python wrapper, it seems to bee a problem related to reading the data frame from csv file 
+    # (it seems to interpret the numerical observations as non-numeric). It's not worth spending time fixing this so I'll delete the test
+
     """ file_name_actual: str = "inventory_plot_actual040.jpg"
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
