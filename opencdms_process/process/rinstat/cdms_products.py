@@ -173,6 +173,8 @@ def export_cdt(
     # TODO file_path = paste0("CDT-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params = _get_r_params(locals())
+    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
+
     r_cdms_products.export_cdt(
         data=r_params["data"],
         station=r_params["station"],

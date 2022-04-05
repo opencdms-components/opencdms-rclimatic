@@ -168,7 +168,35 @@ def test_climatic_summary():
 
 
 def test_export_cdt():
-    pass
+
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_cdt(date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
+    #            metadata = stations_niger)
+    '''actual = cdms_products.export_cdt(
+        data=daily_niger,
+        date_time="date",
+        element="rain",
+        station="station_name",
+        latitude="lat",
+        longitude="long",
+        altitude="alt",
+        metadata=stations_niger,
+    )
+    assert __is_expected_csv(data=actual, file_name="output_export_cdt010.csv")'''
 
 
 def test_export_cdt_daily():
@@ -462,7 +490,7 @@ def test_inventory_plot():
 
 def test_inventory_table():
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
-    data = read_csv(
+    daily_niger = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -471,7 +499,7 @@ def test_inventory_table():
 
     # Functions output for one element (rain) for day
     actual = cdms_products.inventory_table(
-        data=data,
+        data=daily_niger,
         date_time="date",
         elements=["rain"],
         station="station_name",
@@ -483,7 +511,7 @@ def test_inventory_table():
 
     # Functions output for all elements for day
     actual = cdms_products.inventory_table(
-        data=data,
+        data=daily_niger,
         date_time="date",
         elements=["tmax", "tmin", "rain", "hmax", "hmin", "sunh", "ws", "wd"],
         station="station_name",
@@ -495,7 +523,7 @@ def test_inventory_table():
 
     # Functions output for one element (rain) for doy
     actual = cdms_products.inventory_table(
-        data=data,
+        data=daily_niger,
         date_time="date",
         elements=["rain"],
         station="station_name",
@@ -507,7 +535,7 @@ def test_inventory_table():
 
     # Functions output for all elements for doy
     actual = cdms_products.inventory_table(
-        data=data,
+        data=daily_niger,
         date_time="date",
         elements=["tmax", "tmin", "rain", "hmax", "hmin", "sunh", "ws", "wd"],
         station="station_name",
