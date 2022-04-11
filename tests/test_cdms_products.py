@@ -1,6 +1,7 @@
 from cmath import atan
 import filecmp
 import os
+from black import err
 from pandas import DataFrame, read_csv
 from opencdms_process.process.rinstat import cdms_products
 
@@ -10,7 +11,7 @@ output_path_actual: str = os.path.join(TEST_DIR, "results_actual")
 
 def test_climatic_extremes():
     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
-    data = read_csv(
+    niger50 = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -19,7 +20,7 @@ def test_climatic_extremes():
 
     # test that max and min are correctly calculated
     actual = cdms_products.climatic_extremes(
-        data=data,
+        data=niger50,
         date_time="date",
         year="year",
         month="month",
@@ -32,9 +33,8 @@ def test_climatic_extremes():
     assert __is_expected_csv(data=actual, file_name="climatic_extremes_actual010.csv")
 
     # test that Date cols are correctly calculated
-    # TODO this test generates a warning
     actual = cdms_products.climatic_extremes(
-        data=data,
+        data=niger50,
         date_time="date",
         year="year",
         month="month",
@@ -472,7 +472,37 @@ def test_inventory_plot():
 
 
 def test_inventory_table():
+
+    # test with data that has invalid format for date column, should trigger exception
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        # parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    try:
+        actual = cdms_products.inventory_table(
+            data=daily_niger,
+            date_time="date",
+            elements=["rain"],
+            station="station_name",
+            year="year",
+            month="month",
+            day="day",
+        )
+        assert False  # exception should have been thrown
+    except Exception as err:
+        actual: str = err.args[0]
+        expected: str = (
+            "Error in (function (data, date_time, elements, station = NULL, "
+            "year = NULL,  : \n  Assertion on 'data[[date_time]]' failed: Must be of class "
+            "'Date', not 'character'.\n"
+        )
+        assert actual == expected
+
+    # read in correctly formatted data
     daily_niger = read_csv(
         data_file,
         parse_dates=["date"],
