@@ -757,8 +757,6 @@ def timeseries_plot(
     x_title: str = None,
     y_title: str = None,
 ):
-    # TODO ensure show_legend nan converted to R NA
-
     r_params: Dict = _get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
         data=r_params["data"],
@@ -798,7 +796,6 @@ def windrose(
     variable_wind: float = 990,
     n_col: int = None,
 ):
-    # TODO speed_cuts = NA
     r_params: Dict = _get_r_params(locals())
     r_plot = r_cdms_products.windrose(
         data=r_params["data"],
