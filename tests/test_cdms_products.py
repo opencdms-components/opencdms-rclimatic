@@ -74,7 +74,7 @@ def test_climatic_missing():
 def test_climatic_summary():
     # test approx 29000 row dataframe with missing values
     data_file: str = os.path.join(TEST_DIR, "data", "dodoma.csv")
-    data = read_csv(
+    dodoma = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -82,7 +82,7 @@ def test_climatic_summary():
     )
 
     actual = cdms_products.climatic_summary(
-        data=data,
+        data=dodoma,
         date_time="date",
         elements=["rain", "tmax"],
         summaries={"mean": "mean", "sd": "sd"},
@@ -92,7 +92,7 @@ def test_climatic_summary():
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual005.csv")
 
     actual = cdms_products.climatic_summary(
-        data=data,
+        data=dodoma,
         date_time="date",
         elements=["rain", "tmax"],
         summaries={"mean": "mean", "sd": "sd", "n_na": "naflex::na_n"},
@@ -104,7 +104,7 @@ def test_climatic_summary():
     # test approx 55000 row dataframe with missing values
 
     data_file: str = os.path.join(TEST_DIR, "data", "rwanda.csv")
-    data = read_csv(
+    rwanda = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -112,7 +112,7 @@ def test_climatic_summary():
     )
 
     actual = cdms_products.climatic_summary(
-        data=data,
+        data=rwanda,
         date_time="date",
         elements=["precip", "tmp_min"],
         station="station_id",
@@ -125,7 +125,7 @@ def test_climatic_summary():
     # run selection of package `testhat` tests
 
     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
-    data = read_csv(
+    niger50 = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -133,7 +133,7 @@ def test_climatic_summary():
     )
 
     actual = cdms_products.climatic_summary(
-        data=data,
+        data=niger50,
         date_time="date",
         year="year",
         month="month",
@@ -148,7 +148,7 @@ def test_climatic_summary():
     # test with data used in demo
 
     data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
-    data = read_csv(
+    observationFinalMinimal = read_csv(
         data_file,
         parse_dates=["obsDatetime"],
         dayfirst=True,
@@ -157,7 +157,7 @@ def test_climatic_summary():
     # climatic_summary(data = obs, date_time = "obsDatetime", station = "ï..recordedFrom", elements = "obsValue",
     #       to = "annual", summaries = c(mean = "mean", max = "max", min = "min"))
     actual = cdms_products.climatic_summary(
-        data=data,
+        data=observationFinalMinimal,
         date_time="obsDatetime",
         elements=["obsValue"],
         station="recordedFrom",
@@ -166,6 +166,18 @@ def test_climatic_summary():
     )
     assert __is_expected_csv(data=actual, file_name="climatic_summary_actual040.csv")
 
+    # test summaries_params
+    actual = cdms_products.climatic_summary(
+        data=dodoma,
+        date_time="date",
+        elements=["rain", "tmax"],
+        summaries={"mean": "mean", "sd": "sd"},
+        na_rm=True,
+        to="overall",
+        summaries_params={"mean": {"trim":0.5}},
+    )
+    assert __is_expected_csv(data=actual, file_name="climatic_summary_actual050.csv")
+    
 
 def test_export_cdt():
 
@@ -414,7 +426,7 @@ def test_histogram_plot():
 
 def test_inventory_plot():
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
-    data = read_csv(
+    daily_niger = read_csv(
         data_file,
         parse_dates=["date"],
         dayfirst=True,
@@ -426,7 +438,7 @@ def test_inventory_plot():
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
         file_name=file_name_actual,
-        data=data,
+        data=daily_niger,
         station="station_name",
         elements=["tmax", "tmin"],
         date_time="date",
@@ -439,7 +451,7 @@ def test_inventory_plot():
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
         file_name=file_name_actual,
-        data=data,
+        data=daily_niger,
         station="station_name",
         elements=["tmax", "tmin"],
         date_time="date",
@@ -452,7 +464,7 @@ def test_inventory_plot():
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
         file_name=file_name_actual,
-        data=data,
+        data=daily_niger,
         station="station_name",
         elements=["tmax", "tmin"],
         date_time="date",
@@ -460,15 +472,6 @@ def test_inventory_plot():
         display_rain_days=True,
     )
     assert __is_expected_jpg(file_name_actual)
-
-    # test with data used in demo
-    data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
-    data = read_csv(
-        data_file,
-        parse_dates=["obsDatetime"],
-        dayfirst=True,
-        na_values="NA",
-    )
 
 
 def test_inventory_table():

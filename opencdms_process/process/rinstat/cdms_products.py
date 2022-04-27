@@ -6,8 +6,8 @@ from typing import Dict, List, Tuple
 from numpy import integer
 from pandas import DataFrame
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import conversion, default_converter, packages, pandas2ri, globalenv
-from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
+from rpy2.robjects import conversion, default_converter, packages, pandas2ri, globalenv, NA_Character, NA_Logical
+from rpy2.robjects.vectors import FloatVector, ListVector, StrVector, Vector
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects import r
 
@@ -22,10 +22,10 @@ def climatic_extremes(
     station: str = None,
     year: str = None,
     month: str = None,
-    dekad=None,  # TODO add type
-    pentad=None,  # TODO add type
+    dekad: str = None,
+    pentad: str = None,
     to: str = "hourly",
-    by=None,  # TODO add type
+    by: List[str] = [],
     doy: str = None,
     doy_first: integer = 1,
     doy_last: integer = 366,
@@ -43,15 +43,15 @@ def climatic_extremes(
 ) -> DataFrame:
     """Calculate extremes from climatic data.
 
-    Returns a data table displaying the minimum and/or maximum values for 
+    Returns a data table displaying the minimum and/or maximum values for
     elements in a given time period. This can be provided by station.
 
     Args:
         data: The data.frame to calculate from.
         date_time: The name of the date column in 'data'.
-        elements: The name of the elements column in 'data' to  apply the 
+        elements: The name of the elements column in 'data' to  apply the
           function to.
-        station: The name of the station column in 'data', if the data are 
+        station: The name of the station column in 'data', if the data are
           for multiple station.
         year: The name of the year column in 'data'.
         month: The name of the month column in 'data'.
@@ -59,14 +59,14 @@ def climatic_extremes(
         pentad: The name of the pentad column in 'data'.
         to: The date-time format to put the data into.
         by: The name of columns in 'data' to group the summary data by.
-        doy: The name of the day of the year (1-366) column in 'data'. 
+        doy: The name of the day of the year (1-366) column in 'data'.
           If 'NULL' it will be created using 'lubridate::year(data[[doy]])'.
         doy_first: The first day of the year.
         doy_last: The last day of the year.
         max_val: If True the extreme maximum is calculated.
         min_val: If True the extreme minimum is calculated.
-        first_date: If True the first instance of 'date_time' when the value 
-          equals the summary value is included. Generally only used for extreme 
+        first_date: If True the first instance of 'date_time' when the value
+          equals the summary value is included. Generally only used for extreme
           summaries i.e. first 'date_time' when the maximum occurred.
         n_dates: If True the number of 'date_time' points when the value
           equals the summary value is included. Generally only used for
@@ -143,14 +143,14 @@ def climatic_summary(
     elements: List[str] = [],
     year: str = None,
     month: str = None,
-    dekad=None,  # TODO add type
-    pentad=None,  # TODO add type
+    dekad: str = None,
+    pentad: str = None,
     to: str = "hourly",
-    by=None,  # TODO add type
+    by: List[str] = [],
     doy: str = None,
     doy_first: integer = 1,
     doy_last: integer = 366,
-    summaries: Dict = {"n": "dplyr::n"},
+    summaries: Dict[str, str] = {"n": "dplyr::n"},
     na_rm: bool = False,
     na_prop: integer = None,
     na_n: integer = None,
@@ -159,15 +159,24 @@ def climatic_summary(
     first_date: bool = False,
     n_dates: bool = False,
     last_date: bool = False,
-    summaries_params: List = [],
+    summaries_params: Dict[str, Dict] = {},
     names: str = "{.fn}_{.col}",
 ) -> DataFrame:
 
     r_params: Dict = _get_r_params(locals())
 
-    names: List = list(r_params["summaries"].keys())
-    r_params["summaries"] = StrVector(list(r_params["summaries"].values()))
-    r_params["summaries"].names = names
+    r_params["summaries"] = StrVector(list(summaries.values()))
+    r_params["summaries"].names = list(summaries.keys())
+
+    # summaries_params: convert to a 2-level deep R-type:
+    #   one list item for each summary function, and one list of parameters for 
+    #   each summary function e.g. 'list(mean = list(trim = 0.5))'
+    r_summaries_params: Dict[str, list] = {}
+    for key in summaries_params:
+        r_summaries_params[key] = ListVector(summaries_params[key])
+        r_summaries_params[key].names = list(summaries_params[key].keys())
+    r_params["summaries_params"] = ListVector(r_summaries_params)
+    r_params["summaries_params"].names = list(summaries_params.keys())
 
     r_data_frame: RDataFrame = r_cdms_products.climatic_summary(
         data=r_params["data"],
@@ -192,7 +201,7 @@ def climatic_summary(
         first_date=r_params["first_date"],
         n_dates=r_params["n_dates"],
         last_date=r_params["last_date"],
-        # summaries_params: r_summaries_params, TODO convert to R type 'list of lists'
+        summaries_params=r_params["summaries_params"],
         names=r_params["names"],
     )
     return _get_data_frame(r_data_frame)
@@ -519,8 +528,8 @@ def histogram_plot(
     position: str = "identity",
     colour_bank: str = None,
     na_rm: bool = False,
-    orientation: str = None,
-    show_legend: bool = None,
+    orientation: str = str(NA_Character),
+    show_legend: bool = NA_Logical,
     width: int = None,
     facet_nrow: int = None,
     facet_ncol: int = None,
@@ -528,8 +537,6 @@ def histogram_plot(
     x_title: str = None,
     y_title: str = None,
 ):
-    # TODO orientation=NA,
-    # TODO show_legend=NA,
     r_params: Dict = _get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
         data=r_params["data"],
@@ -540,8 +547,8 @@ def histogram_plot(
         position=r_params["position"],
         colour_bank=r_params["colour_bank"],
         na_rm=r_params["na_rm"],
-        # orientation=r_params["orientation"],
-        # show_legend=r_params["show_legend"],
+        orientation=r_params["orientation"],
+        show_legend=r_params["show_legend"],
         width=r_params["width"],
         facet_nrow=r_params["facet_nrow"],
         facet_ncol=r_params["facet_ncol"],
@@ -582,7 +589,7 @@ def inventory_plot(
     x_scale_to: int = None,
     x_scale_by: int = None,
     y_date_format: str = None,
-    y_date_scale_by: str = None,  # TODO clarify type
+    y_date_scale_by: str = None,
     y_date_scale_step: int = 1,
     facet_scales: str = "fixed",
     facet_dir: str = "h",
@@ -617,12 +624,12 @@ def inventory_plot(
     #   e.g. with format like 'list(breaks = c(0, 0.85, Inf), labels = c("Dry", "Rain"), key_colours = c("tan3", "blue"))'
     r_rain_cats: Dict[str, list] = {}
     for key in rain_cats:
-        # TODO add check for empty list; add check that list is all strings or all floats
         key_list: List = list(rain_cats[key])
-        if isinstance(key_list[0], str):
-            r_rain_cats[key] = StrVector(key_list)
-        else:
-            r_rain_cats[key] = FloatVector(key_list)
+        if len(key_list)>0:
+            if isinstance(key_list[0], str):
+                r_rain_cats[key] = StrVector(key_list)
+            else:
+                r_rain_cats[key] = FloatVector(key_list)
     r_params["rain_cats"] = ListVector(r_rain_cats)
 
     r_plot = r_cdms_products.inventory_plot(
@@ -745,7 +752,7 @@ def timeseries_plot(
     add_path: bool = False,
     add_step: bool = False,
     na_rm: bool = False,
-    show_legend: bool = nan,
+    show_legend: bool = NA_Logical,
     title: str = "Timeseries Plot",
     x_title: str = None,
     y_title: str = None,
@@ -826,8 +833,11 @@ def _get_r_params(params: Dict) -> Dict:
         if r_params[key] is None:
             r_params[key] = r_NULL
         elif isinstance(r_params[key], List):
-            # TODO add support for float vectors, needed for windrose speed_cuts parameter
-            r_params[key] = StrVector(r_params[key])
+            if len(r_params[key]) > 0:
+                if isinstance(r_params[key][0], str):
+                    r_params[key] = StrVector(r_params[key])
+                elif isinstance(r_params[key][0], float):
+                    r_params[key] = FloatVector(r_params[key])
         elif isinstance(r_params[key], DataFrame):
             with conversion.localconverter(default_converter + pandas2ri.converter):
                 r_params[key] = conversion.py2rpy(r_params[key])
