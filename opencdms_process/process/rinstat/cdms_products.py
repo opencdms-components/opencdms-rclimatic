@@ -214,17 +214,16 @@ def export_cdt(
     latitude: str,
     longitude: str,
     altitude: str,
+    file_path: str,
     type: str = "dekad",
     date_time: str = None,
     year: str = None,
     month: str = None,
     dekad: str = None,
     metadata: DataFrame = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("CDT-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
@@ -254,12 +253,11 @@ def export_cdt_daily(
     latitude: str,
     longitude: str,
     altitude: str,
+    file_path: str,
     metadata: DataFrame = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("CDT-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_cdt_daily(
@@ -283,15 +281,14 @@ def export_cdt_dekad(
     latitude: str,
     longitude: str,
     altitude: str,
+    file_path: str,
     year: str = None,
     month: str = None,
     dekad: str = None,
     metadata: DataFrame = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("CDT-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_cdt_dekad(
@@ -314,6 +311,7 @@ def export_climat_messages(
     data: DataFrame,
     date_time: str,
     station_id: str,
+    folder: str,
     year: str = None,
     month: str = None,
     mean_pressure_station: str = None,
@@ -327,9 +325,7 @@ def export_climat_messages(
     total_snow_depth: str = None,
     max_ws: str = None,
     min_h_vis: str = None,
-    folder: str = None,
 ):
-    # TODO folder=getwd()
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_climat_messages(
         data=r_params["data"],
@@ -357,16 +353,15 @@ def export_climdex(
     prcp: str,
     tmax: str,
     tmin: str,
+    file_path: str,
     date: str = None,
     year: str = None,
     month: str = None,
     day: str = None,
     file_type: str = "csv",
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("climdex-", Sys.Date())
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_climdex(
@@ -391,15 +386,14 @@ def export_geoclim(
     station_id: str,
     latitude: str,
     longitude: str,
+    file_path: str,
     type: str = "dekad",
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_geoclim(
@@ -426,14 +420,13 @@ def export_geoclim_dekad(
     station_id: str,
     latitude: str,
     longitude: str,
+    file_path: str,
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_geoclim_dekad(
@@ -459,14 +452,13 @@ def export_geoclim_month(
     station_id: str,
     latitude: str,
     longitude: str,
+    file_path: str,
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_geoclim_month(
@@ -492,14 +484,13 @@ def export_geoclim_pentad(
     station_id: str,
     latitude: str,
     longitude: str,
+    file_path: str,
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    file_path: str = None,
     *args,
     **kwargs
 ):
-    # TODO file_path = paste0("GEOCLIM-", element, ".csv")
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
     r_cdms_products.export_geoclim_pentad(

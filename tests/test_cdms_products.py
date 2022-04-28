@@ -886,7 +886,6 @@ def __is_expected_csv(data: DataFrame, file_name: str) -> bool:
     diffs: DataFrame = actual_from_csv.compare(expected_from_csv)
     return diffs.empty
 
-
 def __is_expected_jpg(file_name: str) -> bool:
     output_file_actual, output_file_expected = __get_output_file_paths(file_name)
     return filecmp.cmp(output_file_actual, output_file_expected)
