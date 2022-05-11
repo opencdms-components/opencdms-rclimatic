@@ -1,15 +1,13 @@
-from cmath import nan
-import copy
-from io import BytesIO
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from numpy import integer
 from pandas import DataFrame
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import conversion, default_converter, packages, pandas2ri, globalenv, NA_Character, NA_Logical
-from rpy2.robjects.vectors import FloatVector, ListVector, StrVector, Vector
+from rpy2.robjects import (NA_Character, NA_Logical, conversion,
+                           default_converter, globalenv, packages, pandas2ri,
+                           r)
 from rpy2.robjects.vectors import DataFrame as RDataFrame
-from rpy2.robjects import r
+from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
 
 r_cdms_products = packages.importr("cdms.products")
 r_ggplot2 = packages.importr("ggplot2")
