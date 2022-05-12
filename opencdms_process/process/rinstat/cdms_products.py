@@ -122,6 +122,25 @@ def climatic_missing(
     start: bool = True,
     end: bool = False,
 ) -> DataFrame:
+    """Summarise missing data in a data frame
+
+     Returns a data frame displaying the number and
+     percentage of missing values for an element (and station) in a
+     given time period. The total number of full years are also given.
+
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        elements: The name of the column in 'data' to apply the function to.
+        station_id: The name of the station column in 'data', if the data are
+                for multiple station, then the calculations are performed
+                separately for each station.
+        start: If 'True' start date as ...
+        end: If 'True' set end date as ...
+
+    Returns:
+        Data frame summarising the missing data
+    """
     r_params: Dict = _get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
         data=r_params["data"],
