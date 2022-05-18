@@ -45,7 +45,7 @@ def climatic_extremes(
     elements in a given time period. This can be provided by station.
 
     Args:
-        data: The data.frame to calculate from.
+        data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
         elements: The name of the elements column in 'data' to  apply the
           function to.
@@ -75,11 +75,11 @@ def climatic_extremes(
         na_rm: If True all 'na_ parameters are ignored and missing values are
           removed. If 'False' missing values are not
           removed unless any 'na_ parameters are specified.
-        na_prop: Max proportion of missing values allowed
-        na_n: Max number of missing values allowed
-        na_consec: Max number of consecutive missing values allowed
-        na_n_non: Min number of non-missing values required
-        names: Format of column names. Passed to '.names' in 'dplyr::across'
+        na_prop: Max proportion of missing values allowed.
+        na_n: Max number of missing values allowed.
+        na_consec: Max number of consecutive missing values allowed.
+        na_n_non: Min number of non-missing values required.
+        names: Format of column names. Passed to '.names' in 'dplyr::across'.
 
     Returns:
         A summary data frame containing minimum/maximum values for element(s).
@@ -122,7 +122,7 @@ def climatic_missing(
     start: bool = True,
     end: bool = False,
 ) -> DataFrame:
-    """Summarise missing data in a data frame
+    """Summarise missing data in a data frame.
 
      Returns a data frame displaying the number and
      percentage of missing values for an element (and station) in a
@@ -133,13 +133,13 @@ def climatic_missing(
         date_time: The name of the date column in 'data'.
         elements: The name of the column in 'data' to apply the function to.
         station_id: The name of the station column in 'data', if the data are
-                for multiple station, then the calculations are performed
-                separately for each station.
+          for multiple station, then the calculations are performed separately 
+          for each station.
         start: If 'True' start date as ...
         end: If 'True' set end date as ...
 
     Returns:
-        Data frame summarising the missing data
+        Data frame summarising the missing data.
     """
     r_params: Dict = _get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
@@ -179,124 +179,53 @@ def climatic_summary(
     summaries_params: Dict[str, Dict] = {},
     names: str = "{.fn}_{.col}",
 ) -> DataFrame:
-    """Calculate summaries from climatic data
+    """Calculate summaries from climatic data.
 
     Returns a data table displaying summary statistics for element(s) 
     (and for each station) in a given time period.
 
-Usage:
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        station: The name of the station column in 'data', if the data are
+          for multiple station.
+        elements:  The name of the elements column in 'data' to apply the function to..
+        year: The name of the year column in 'data'.
+        month: The name of the month column in 'data'.
+        dekad: The name of the dekad column in 'data'.
+        pentad: The name of the pentad column in 'data'.
+        to: The date-time format to put the data into.
+        by: The name of columns in 'data' to group the summary data by.
+        doy: The name of the day of the year (1-366) column in 'data'.
+          If 'NULL' it will be created using 'lubridate::year(data[[doy]])'.
+        doy_first: The first day of the year.
+        doy_last: The last day of the year.
+        summaries: A named character vector of summary functions. The names are 
+          used as the column names in the results. The values can be any 
+          function name as a string or a function call as a formula. 
+          e.g. {"mean" = "mean", "st_dv" = "sd", "n = "~dplyr::n()"}.
+        na_rm: If True all 'na_ parameters are ignored and missing values are
+          removed. If 'False' missing values are not
+          removed unless any 'na_ parameters are specified.
+        na_prop: Max proportion of missing values allowed.
+        na_n: Max number of missing values allowed.
+        na_consec: Max number of consecutive missing values allowed.
+        na_n_non: Min number of non-missing values required.
+        first_date: If True the first instance of 'date_time' when the value
+          equals the summary value is included. Generally only used for extreme
+          summaries i.e. first 'date_time' when the maximum occurred.
+        n_dates: If True the number of 'date_time' points when the value
+          equals the summary value is included. Generally only used for
+          extreme summaries i.e. number of days in which the minimum occurred.
+        last_date: If True the last instance of 'date_time' when the value
+          equals the summary value is included. Generally only used for
+          extreme summaries i.e. last 'date_time' whenthe maximum occurred.
+        summaries_params: Additional parameters to pass to 'summaries'. Must be 
+          a list of lists with the same names as 'summaries'.
+        names: Format of column names. Passed to '.names' in 'dplyr::across'.
 
-     climatic_summary(
-       data,
-       date_time,
-       station = NULL,
-       elements = NULL,
-       year = NULL,
-       month = NULL,
-       dekad = NULL,
-       pentad = NULL,
-       to = c("hourly", "daily", "pentad", "dekadal", "monthly", "annual-within-year",
-         "annual", "longterm-monthly", "longterm-within-year", "station", "overall"),
-       by = NULL,
-       doy = NULL,
-       doy_first = 1,
-       doy_last = 366,
-       summaries = c(n = "~dplyr::n()"),
-       na_rm = FALSE,
-       na_prop = NULL,
-       na_n = NULL,
-       na_consec = NULL,
-       na_n_non = NULL,
-       first_date = FALSE,
-       n_dates = FALSE,
-       last_date = FALSE,
-       summaries_params = list(),
-       names = "{.fn}_{.col}"
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station.
-
-elements: ‘character’ The name of the elements column in ‘data’ to
-          apply the function to.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
-   month: ‘character(1)’ The name of the month column in ‘data’.
-
-   dekad: ‘character(1)’ The name of the dekad column in ‘data’.
-
-  pentad: ‘character(1)’ The name of the pentad column in ‘data’.
-
-      to: ‘character(1)’ The date-time format to put the data into.
-
-      by: ‘character’ The name of columns in ‘data’ to group the
-          summary data by.
-
-     doy: ‘character(1)’ The name of the day of the year (1-366) column
-          in ‘data’. If ‘NULL’ it will be created using
-          ‘lubridate::year(data[[doy]])’.
-
-doy_first: ‘integer(1)’ The first day of the year.
-
-doy_last: ‘integer(1)’ The last day of the year.
-
-summaries: ‘character’ A named character vector of summary functions.
-          The names are used as the column names in the results. The
-          values can be any function name as a string or a function
-          call as a formula. e.g. c(mean = "mean", st_dv = "sd", n =
-          "~dplyr::n()")
-
-   na_rm: ‘logical(1)’ If ‘TRUE’ all ‘na_’ parameters are ignored and
-          missing values are removed. If ‘FALSE’ missing values are not
-          removed unless any ‘na_’ parameters are specified.
-          
-     na_prop: ‘integer(1)’ Max proportion of missing values allowed
-
-    na_n: ‘integer(1)’ Max number of missing values allowed
-
-na_consec: ‘integer(1)’ Max number of consecutive missing values
-          allowed
-
-na_n_non: ‘integer(1)’ Min number of non-missing values required
-
-first_date: ‘logical(1)’ If ‘TRUE’ the first instance of ‘date_time’
-          when the value equals the summary value is included.
-          Generally only used for extreme summaries i.e. first
-          ‘date_time’ when the maximum occurred.
-
- n_dates: ‘logical(1)’ If ‘TRUE’ the number of ‘date_time’ points when
-          the value equals the summary value is included. Generally
-          only used for extreme summaries i.e. number of days in which
-          the minimum occurred.
-
-last_date: ‘logical(1)’ If ‘TRUE’ the last instance of ‘date_time’ when
-          the value equals the summary value is included. Generally
-          only used for extreme summaries i.e. last ‘date_time’ when
-          the maximum occurred.
-
-summaries_params: ‘list’ Additional parameters to pass to ‘summaries’.
-          Must be a list of lists with the same names as ‘summaries’.
-
-   names: Format of column names. Passed to ‘.names’ in ‘dplyr::across’
-
-Value:
-
-     A summary data frame for selected element(s) in climatic data.
-
-Examples:
-
-     # Calculate frequencies for tmin/tmax for each year, month, and station.
-     # filter daily_niger data for the example
-     daily_niger_1 <- daily_niger %>% dplyr::filter(year > 1960)
-     climatic_summary(data = daily_niger_1, date_time = "date", station = "station_name",
-                      elements = c("tmin", "tmax"), to = "monthly")
+    Returns:
+        A summary data frame for selected element(s) in climatic data.
     """
 
     r_params: Dict = _get_r_params(locals())
@@ -360,81 +289,42 @@ def export_cdt(
     *args,
     **kwargs
 ):
-    """Export daily or dekadal data in the format for CDT
+    """Export daily or dekadal data in the format for CDT.
 
     Rearranges a data frame using ‘prepare_cdt’ to a format suitable for use in 
     CDT. The data frame is then written to a file or connection.
 
-Usage:
+    Args:
+        data: Data frame of daily or dekadal climatic data in tidy format 
+          i.e. one row per time point (per station) and one column per element.
+        station: Name of the station identifying column in 'data'.
+        element: Name of the element column in 'data'.
+        latitude: Name of the latitude column in 'metadata'.
+        longitude: Name of the longitude column in 'metadata'.
+        altitude: Name of the altitude column in 'metadata'.
+        file_path: The file path and file name to export.
+        type: The type of data, either 'dekad' or 'daily'.
+        date_time: Name of the date column in 'data'. If 'type' is 'daily', 
+          then required. If 'type' is 'dekad', then this is only needed if 
+          'year', 'month', and 'dekad' are not specified.
+        year: Name of the year column in 'data'. Only needed if 'type' is 
+          'dekad'. If 'None' it will be created using 
+          'lubridate::year(data[[date_time]])'.
+        month: Name of the month column in 'data'. Only needed if 'type' is 
+          'dekad'. If 'None' it will be created using 
+          'lubridate::year(month[[date_time]])'.
+        dekad: Name of the dekad column in 'data'. Only needed if 'type' is 
+          'dekad'. If 'None' it will be created using the 'dekad' function.
+        metadata: Data frame of station metadata. Use this if the station 
+          details are in a separate data.frame with one row per station. If 
+          specified, 'latitude, 'longitude and 'altitude' are assumed to be in 
+          'metadata' and 'station' must be in both 'data' and 'metadata' to 
+          facilitate joining.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'.
 
-     export_cdt(
-       data,
-       station,
-       element,
-       latitude,
-       longitude,
-       altitude,
-       type = c("dekad", "daily"),
-       date_time = NULL,
-       year = NULL,
-       month = NULL,
-       dekad = NULL,
-       metadata = NULL,
-       file_path = paste0("CDT-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ data.frame of daily or dekadal climatic data in
-          tidy format i.e. one row per time point (per station) and one
-          column per element.
-
- station: ‘character(1)’ Name of the station identifying column in
-          ‘data’.
-
- element: ‘character(1)’ Name of the element column in ‘data’.
-
-latitude: ‘character(1)’ Name of the latitude column in ‘metadata’.
-
-longitude: ‘character(1)’ Name of the longitude column in ‘metadata’.
-
-altitude: ‘character(1)’ Name of the altitude column in ‘metadata’.
-
-    type: ‘character(1)’ Character indicating the type of data, either
-          ‘"dekad"’ or ‘"daily"’.
-
-date_time: ‘character(1)’ Name of the date column in ‘data’. Required
-          if ‘type = "daily"’. If ‘type = "dekad"’ this is only needed
-          if ‘year’, ‘month’, and ‘dekad’ are not specified.
-
-    year: ‘character(1)’ Name of the year column in ‘data’. Only needed
-          if ‘type = "dekad"’. If ‘NULL’ it will be created using
-          ‘lubridate::year(data[[date_time]])’.
-
-   month: ‘character(1)’ Name of the month column in ‘data’. Only
-          needed if ‘type = "dekad"’. If ‘NULL’ it will be created
-          using ‘lubridate::month(data[[date_time]])’.
-
-   dekad: ‘character(1)’ Name of the dekad column in ‘data’. Only
-          needed if ‘type = "dekad"’. If ‘NULL’ it will be created
-          using ‘dekad’ function.
-
-metadata: ‘data.frame’ data.frame of station metadata. Use this is the
-          station details are in a separate data.frame with one row per
-          station. If specified, ‘latitude’, ‘longitude’ and ‘altitude’
-          are assumed to be in ‘metadata’ and ‘station’ must be in both
-          ‘data’ and ‘metadata’ to facilitate joining.
-
-file_path: ‘character(1)’ A character specifying the file path and file
-          name to export.
-
-     ...: Other parameters passed to ‘write.csv()’.
-
-Value:
-
-     Invisibly returns the file path of the saved data.
-     
+    Returns:
+      Invisibly returns the file path of the saved data.     
 """
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -470,61 +360,36 @@ def export_cdt_daily(
     *args,
     **kwargs
 ):
-    """Export daily data in the format for CDT
+    """Export daily data in the format for CDT.
 
     Takes a data frame with daily data. This data frame is then rearranged 
     using ‘prepare_cdt_daily’ to a format suitable for use in CDT, and then 
     written to a file or connection.
 
-Usage:
-
-     export_cdt_daily(
-       data,
-       station,
-       element,
-       date_time,
-       latitude,
-       longitude,
-       altitude,
-       metadata = NULL,
-       file_path = paste0("CDT-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ data.frame of daily climatic data in tidy format
+    Args:
+        data: Data frame of daily climatic data in tidy format
           i.e. one row per day (per station) and one column per
           element.
-
- station: ‘character(1)’ Name of the station identifying column in
-          ‘data’.
-
- element: ‘character(1)’ Name of the element column in ‘data’.
-
-date_time: ‘character(1)’ Name of the date column in ‘data’. Required
-          if ‘type = "daily"’. If ‘type = "dekad"’ this is only needed
-          if ‘year’, ‘month’, and ‘dekad’ are not specified.
-
-latitude: ‘character(1)’ Name of the latitude column in ‘metadata’.
-
-longitude: ‘character(1)’ Name of the longitude column in ‘metadata’.
-
-altitude: ‘character(1)’ Name of the altitude column in ‘metadata’.
-
-metadata: ‘data.frame’ data.frame of station metadata. Use this is the
+    station: Name of the station identifying column in
+          'data'.
+ element: Name of the element column in 'data'.
+date_time: Name of the date column in 'data'. Required
+          if ‘type = "daily"’. If 'type' is 'dekad' this is only needed
+          if 'year', 'month', and 'dekad' are not specified.
+latitude: Name of the latitude column in 'metadata'.
+longitude: Name of the longitude column in 'metadata'.
+altitude: Name of the altitude column in 'metadata'.
+metadata: Data frame of station metadata. Use this is the
           station details are in a separate data.frame with one row per
-          station. If specified, ‘latitude’, ‘longitude’ and ‘altitude’
-          are assumed to be in ‘metadata’ and ‘station’ must be in both
-          ‘data’ and ‘metadata’ to facilitate joining.
-
-file_path: ‘character(1)’ A character specifying the file path and file
+          station. If specified, 'latitude, 'longitude and 'altitude'
+          are assumed to be in 'metadata' and 'station' must be in both
+          'data' and 'metadata' to facilitate joining.
+file_path: A character specifying the file path and file
           name to export.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'
 
-     ...: Other parameters passed to ‘write.csv()’
-
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data"""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -557,76 +422,45 @@ def export_cdt_dekad(
     *args,
     **kwargs
 ):
-    """Export dekad data in CDT format
+    """Export dekad data in CDT format.
 
     Takes a data frame that has elements summarised by dekad. This data frame
     is then rearranged using ‘prepare_cdt_dekad’ to a format suitable for use 
     in CDT, and then written to a file or connection.
 
-Usage:
-
-     export_cdt_dekad(
-       data,
-       station,
-       element,
-       date_time,
-       latitude,
-       longitude,
-       altitude,
-       year = NULL,
-       month = NULL,
-       dekad = NULL,
-       metadata = NULL,
-       file_path = paste0("CDT-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ data.frame of dekadal climatic data in tidy
+    Args:
+        data: Data frame of dekadal climatic data in tidy
           format i.e. one row per dekad (per station) and one column
           per element.
-
- station: ‘character(1)’ Name of the station identifying column in
-          ‘data’.
-
- element: ‘character(1)’ Name of the element column in ‘data’.
-
-date_time: ‘character(1)’ Name of the date column in ‘data’. Required
-          if ‘type = "daily"’. If ‘type = "dekad"’ this is only needed
-          if ‘year’, ‘month’, and ‘dekad’ are not specified.
-
-latitude: ‘character(1)’ Name of the latitude column in ‘metadata’.
-
-longitude: ‘character(1)’ Name of the longitude column in ‘metadata’.
-
-altitude: ‘character(1)’ Name of the altitude column in ‘metadata’.
-
-    year: ‘character(1)’ Name of the year column in ‘data’. Only needed
-          if ‘type = "dekad"’. If ‘NULL’ it will be created using
-          ‘lubridate::year(data[[date_time]])’.
-
-   month: ‘character(1)’ Name of the month column in ‘data’. Only
-          needed if ‘type = "dekad"’. If ‘NULL’ it will be created
-          using ‘lubridate::month(data[[date_time]])’.
-
-   dekad: ‘character(1)’ Name of the dekad column in ‘data’. Only
-          needed if ‘type = "dekad"’. If ‘NULL’ it will be created
-          using ‘dekad’ function.
-
-metadata: ‘data.frame’ data.frame of station metadata. Use this is the
+    station: Name of the station identifying column in
+          'data'.
+ element: Name of the element column in 'data'.
+date_time: Name of the date column in 'data'. Required
+          if ‘type = "daily"’. If 'type' is 'dekad' this is only needed
+          if 'year', 'month', and 'dekad' are not specified.
+latitude: Name of the latitude column in 'metadata'.
+longitude: Name of the longitude column in 'metadata'.
+altitude: Name of the altitude column in 'metadata'.
+    year: Name of the year column in 'data'. Only needed
+          if ‘type = "dekad"’. If 'None' it will be created using
+          'lubridate::year(data[[date_time]])'.
+   month: Name of the month column in 'data'. Only
+          needed if ‘type = "dekad"’. If 'None' it will be created
+          using 'lubridate::year(month[[date_time]])'.
+   dekad: Name of the dekad column in 'data'. Only
+          needed if ‘type = "dekad"’. If 'None' it will be created
+          using 'dekad' function.
+metadata: Data frame of station metadata. Use this is the
           station details are in a separate data.frame with one row per
-          station. If specified, ‘latitude’, ‘longitude’ and ‘altitude’
-          are assumed to be in ‘metadata’ and ‘station’ must be in both
-          ‘data’ and ‘metadata’ to facilitate joining.
-
-file_path: ‘character(1)’ A character specifying the file path and file
+          station. If specified, 'latitude, 'longitude and 'altitude'
+          are assumed to be in 'metadata' and 'station' must be in both
+          'data' and 'metadata' to facilitate joining.
+file_path: A character specifying the file path and file
           name to export.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'
 
-     ...: Other parameters passed to ‘write.csv()’
-
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data"""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -665,44 +499,16 @@ def export_climat_messages(
     max_ws: str = None,
     min_h_vis: str = None,
 ):
-    """Exports CLIMAT messages file(s) from daily data
+    """Exports CLIMAT messages file(s) from daily data.
 
     Export CLIMAT messages file(s) from daily data
 
-Usage:
-
-     export_climat_messages(
-       data,
-       date_time,
-       station_id,
-       year = NULL,
-       month = NULL,
-       mean_pressure_station = NULL,
-       mean_pressure_reduced = NULL,
-       mean_temp = NULL,
-       mean_max_temp = NULL,
-       mean_min_temp = NULL,
-       mean_vapour_pressure = NULL,
-       total_precip = NULL,
-       total_sunshine = NULL,
-       total_snow_depth = NULL,
-       max_ws = NULL,
-       min_h_vis = NULL,
-       folder = getwd()
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
-station_id: ‘character(1)’ The name of the station column in ‘data’.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
-   month: ‘character(1)’ The name of the month column in ‘data’.
-
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+station_id: The name of the station column in 'data'.
+        year: The name of the year column in 'data'.
+   month: The name of the month column in 'data'.
 mean_pressure_station: TODO
 
 mean_pressure_reduced: TODO
@@ -762,64 +568,36 @@ def export_climdex(
     *args,
     **kwargs
 ):
-    """Export data in the format for RClimDex
+    """Export data in the format for RClimDex.
 
     Rearranges a data frame using ‘prepare_climdex’ to a format suitable for 
     use in RClimDex. The data frame is then written to a file or connection.
 
-Usage:
-
-     export_climdex(
-       data,
-       prcp,
-       tmax,
-       tmin,
-       date = NULL,
-       year = NULL,
-       month = NULL,
-       day = NULL,
-       file_type = c("csv", "txt"),
-       file_path = paste0("climdex-", Sys.Date()),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ data.frame of daily climatic data in tidy format
+    Args:
+        data: Data frame of daily climatic data in tidy format
           i.e. one row per day and one column per element.
-
-    prcp: ‘character(1)’ Name of the precipitation/rainfall column in
-          ‘data’.
-
-    tmax: ‘character(1)’ Name of the maximum temperature column in
-          ‘data’.
-
-    tmin: ‘character(1)’ Name of the minimum temperature column in
-          ‘data’.
-
-    date: ‘character(1)’ Name of the date column in ‘data’. This is
-          only needed if ‘year’, ‘month’, and ‘day’ are not specified.
-
-    year: ‘character(1)’ Name of the year column in ‘data’. If ‘NULL’
+    prcp: Name of the precipitation/rainfall column in
+          'data'.
+    tmax: Name of the maximum temperature column in
+          'data'.
+    tmin: Name of the minimum temperature column in
+          'data'.
+    date: Name of the date column in 'data'. This is
+          only needed if 'year', 'month', and ‘day’ are not specified.
+    year: Name of the year column in 'data'. If 'None'
           it will be created using ‘lubridate::year(data[[date]])’.
-
-   month: ‘character(1)’ Name of the month column in ‘data’. If ‘NULL’
+   month: Name of the month column in 'data'. If 'None'
           it will be created using ‘lubridate::month(data[[date]])’.
-
-     day: ‘character(1)’ Name of the day of the month column in ‘data’.
-          If ‘NULL’ it will be created using
+     day: Name of the day of the month column in 'data'.          If 'None' it will be created using
           ‘lubridate::day(data[[date]])’.
-
-file_type: ‘character(1)’ A character specifying the file type to
-          export as, either ‘"csv"’ or `‘"txt"’.
-
-file_path: ‘character(1)’ A character specifying the file path and file
+file_type: A character specifying the file type to          export as, either ‘"csv"’ or `‘"txt"’.
+file_path: A character specifying the file path and file
           name to export
 
-     ...: Other parameters passed to ‘write.table()’
+        args: TODO
+        kwargs: TODO Other parameters passed to ‘write.table()’
 
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data"""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -853,68 +631,37 @@ def export_geoclim(
     *args,
     **kwargs
 ):
-    """Exports dekad or pentad data in GeoCLIM format
+    """Exports dekad or pentad data in GeoCLIM format.
 
     Rearranges a data frame using ‘prepare_geoclim’ to a format suitable for 
     use in GeoCLIM. The data frame is then written to a file or connection.
 
-Usage:
-
-     export_geoclim(
-       data,
-       year,
-       type_col,
-       element,
-       station_id,
-       latitude,
-       longitude,
-       type = c("dekad", "pentad"),
-       metadata = NULL,
-       join_by = NULL,
-       add_cols = NULL,
-       file_path = paste0("GEOCLIM-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
-type_col: ‘character(1)’ The name of the dekad or pentad column in
-          ‘data’.
-
- element: ‘character(1)’ The name of the element column in ‘data’ to
-          apply the function to.
-
-station_id: ‘character(1)’ The name of the station column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
-latitude: ‘character(1)’ The name of the latitude column in ‘metadata’,
-          or ‘data’ if ‘metadata = NULL’.
-
-longitude: ‘character(1)’ The name of the longitude column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
-    type: ‘character(1)’ Whether the data is in ‘dekad’ or ‘pentad’
+    Args:
+        data: The data frame to calculate from.
+        year: The name of the year column in 'data'.
+type_col: The name of the dekad or pentad column in
+          'data'.
+ element: The name of the element column in 'data' to          apply the function to.
+station_id: The name of the station column in
+          'metadata', or 'data' if ‘metadata = NULL’.
+latitude: The name of the latitude column in 'metadata',
+          or 'data' if ‘metadata = NULL’.
+longitude: The name of the longitude column in
+          'metadata', or 'data' if ‘metadata = NULL’.
+    type: Whether the data is in 'dekad' or ‘pentad’
           format.
-
 metadata: ‘data.frame’ The metadata data.frame to calculate from.
-
- join_by: ‘character’ The variable(s) to merge the ‘data’ and
-          ‘metadata’ data frames.
-
+ join_by: ‘character’ The variable(s) to merge the 'data' and
+          'metadata' data frames.
 add_cols: ‘character’ Names of additional metadata columns that should
           be included in the output
 
-file_path: ‘character(1)’ A character specifying the file path and file
+file_path: A character specifying the file path and file
           name to export.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'
 
-     ...: Other parameters passed to ‘write.csv()’
-
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data."""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -949,64 +696,35 @@ def export_geoclim_dekad(
     *args,
     **kwargs
 ):
-    """Exports dekad data in GeoCLIM format
+    """Exports dekad data in GeoCLIM format.
 
     Takes a data frame that is given by by dekad. This data frame is then 
     rearranged using ‘prepare_geoclim_dekad’ to a format suitable for use in 
     GeoCLIM, and then written to a file or connection.
 
-Usage:
-
-     export_geoclim_dekad(
-       data,
-       year,
-       dekad,
-       element,
-       metadata = NULL,
-       join_by = NULL,
-       station_id,
-       latitude,
-       longitude,
-       add_cols = NULL,
-       file_path = paste0("GEOCLIM-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
-   dekad: ‘character(1)’ The name of the dekad column in ‘data’.
-
- element: ‘character(1)’ The name of the element column in ‘data’ to
-          apply the function to.
-
+    Args:
+        data: The data frame to calculate from.
+        year: The name of the year column in 'data'.
+   dekad: The name of the dekad column in 'data'.
+ element: The name of the element column in 'data' to          apply the function to.
 metadata: ‘data.frame’ The metadata data.frame to calculate from.
-
- join_by: ‘character’ The variable(s) to merge the ‘data’ and
-          ‘metadata’ data frames.
-
-station_id: ‘character(1)’ The name of the station column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
-latitude: ‘character(1)’ The name of the latitude column in ‘metadata’,
-          or ‘data’ if ‘metadata = NULL’.
-
-longitude: ‘character(1)’ The name of the longitude column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
+ join_by: ‘character’ The variable(s) to merge the 'data' and
+          'metadata' data frames.
+station_id: The name of the station column in
+          'metadata', or 'data' if ‘metadata = NULL’.
+latitude: The name of the latitude column in 'metadata',
+          or 'data' if ‘metadata = NULL’.
+longitude: The name of the longitude column in
+          'metadata', or 'data' if ‘metadata = NULL’.
 add_cols: ‘character’ Names of additional metadata columns that should
           be included in the output
 
-file_path: ‘character(1)’ A character specifying the file path and file
+file_path: A character specifying the file path and file
           name to export.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'
 
-     ...: Other parameters passed to ‘write.csv()’
-
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data."""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -1040,68 +758,38 @@ def export_geoclim_month(
     *args,
     **kwargs
 ):
-    """Export monthly data in GeoCLIM format
+    """Export monthly data in GeoCLIM format.
 
     Takes a data frame that is given by month. This data frame is then 
     rearranged using ‘prepare_geoclim_month’ to a format suitable for use in 
     GeoCLIM, and then written to a file or connection.
 
-Usage:
-
-     export_geoclim_month(
-       data,
-       year,
-       month,
-       element,
-       station_id,
-       latitude,
-       longitude,
-       metadata = NULL,
-       join_by = NULL,
-       add_cols = NULL,
-       file_path = paste0("GEOCLIM-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-    year: ‘character(1)’ The name of the year column in ‘data’. If
-          ‘NULL’ it will be created using
-          ‘lubridate::year(data[[date_time]])’.
-
-   month: ‘character(1)’ The name of the month column in ‘data’. If
-          ‘NULL’ it will be created using
-          ‘lubridate::month(data[[date_time]])’.
-
- element: ‘character(1)’ The name of the element column in ‘data’ to
-          apply the function to.
-
-station_id: ‘character(1)’ The name of the station column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
-latitude: ‘character(1)’ The name of the latitude column in ‘metadata’,
-          or ‘data’ if ‘metadata = NULL’.
-
-longitude: ‘character(1)’ The name of the longitude column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
+    Args:
+        data: The data frame to calculate from.
+    year: The name of the year column in 'data'. If
+          'None' it will be created using
+          'lubridate::year(data[[date_time]])'.
+   month: The name of the month column in 'data'. If
+          'None' it will be created using
+          'lubridate::year(month[[date_time]])'.
+ element: The name of the element column in 'data' to          apply the function to.
+station_id: The name of the station column in
+          'metadata', or 'data' if ‘metadata = NULL’.
+latitude: The name of the latitude column in 'metadata',
+          or 'data' if ‘metadata = NULL’.
+longitude: The name of the longitude column in
+          'metadata', or 'data' if ‘metadata = NULL’.
 metadata: ‘data.frame’ The metadata data.frame to calculate from.
-
- join_by: ‘character’ The variable(s) to merge the ‘data’ and
-          ‘metadata’ data frames.
-
+ join_by: ‘character’ The variable(s) to merge the 'data' and
+          'metadata' data frames.
 add_cols: ‘character’ Names of additional metadata columns that should
           be included in the output
 
-file_path: ‘character(1)’ A character specifying the file path and file
+file_path: A character specifying the file path and file
           name to export.
-
-     ...: Other parameters passed to ‘write.csv()’.
-
-Value:
-
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'.
+    Returns:
      Invisibly returns the file path of the saved data."""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -1135,64 +823,35 @@ def export_geoclim_pentad(
     *args,
     **kwargs
 ):
-    """Export pentad data in GeoCLIM format
+    """Export pentad data in GeoCLIM format.
 
     Takes a data frame that is in a pentad format. This data frame is then 
     rearranged using ‘prepare_geoclim_pentad’ to a format suitable for use in 
     GeoCLIM, and then written to a file or connection.
 
-Usage:
-
-     export_geoclim_pentad(
-       data,
-       year,
-       pentad,
-       element,
-       metadata = NULL,
-       join_by = NULL,
-       station_id,
-       latitude,
-       longitude,
-       add_cols = NULL,
-       file_path = paste0("GEOCLIM-", element, ".csv"),
-       ...
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
-  pentad: ‘character(1)’ The name of the pentad column in ‘data’.
-
- element: ‘character(1)’ The name of the element column in ‘data’ to
-          apply the function to.
-
+    Args:
+        data: The data frame to calculate from.
+    year: The name of the year column in 'data'.
+  pentad: The name of the pentad column in 'data'.
+ element: The name of the element column in 'data' to          apply the function to.
 metadata: ‘data.frame’ The metadata data.frame to calculate from.
-
- join_by: ‘character’ The variable(s) to merge the ‘data’ and
-          ‘metadata’ data frames.
-
-station_id: ‘character(1)’ The name of the station column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
-latitude: ‘character(1)’ The name of the latitude column in ‘metadata’,
-          or ‘data’ if ‘metadata = NULL’.
-
-longitude: ‘character(1)’ The name of the longitude column in
-          ‘metadata’, or ‘data’ if ‘metadata = NULL’.
-
+ join_by: ‘character’ The variable(s) to merge the 'data' and
+          'metadata' data frames.
+station_id: The name of the station column in
+          'metadata', or 'data' if ‘metadata = NULL’.
+latitude: The name of the latitude column in 'metadata',
+          or 'data' if ‘metadata = NULL’.
+longitude: The name of the longitude column in
+          'metadata', or 'data' if ‘metadata = NULL’.
 add_cols: ‘character’ Names of additional metadata columns that should
           be included in the output
 
-file_path: ‘character(1)’ A character specifying the file path and file
+file_path: A character specifying the file path and file
           name to export.
+        args: TODO
+        kwargs: TODO Other parameters passed to 'write.csv()'
 
-     ...: Other parameters passed to ‘write.csv()’
-
-Value:
-
+    Returns:
      Invisibly returns the file path of the saved data."""
     # TODO forward args and kwargs to R function
     r_params: Dict = _get_r_params(locals())
@@ -1236,83 +895,41 @@ def histogram_plot(
     Returns a histogram using ‘ggplot2’ for each element and station given. 
     Takes a data frame as an input and the relevant columns to create the plot.
 
-Usage:
-
-     histogram_plot(
-       data,
-       date_time,
-       elements,
-       station = NULL,
-       facet_by = c("stations", "elements", "stations-elements", "elements-stations",
-         "none"),
-       position = c("identity", "dodge", "dodge2", "stack", "fill", "layer"),
-       colour_bank = NULL,
-       na_rm = FALSE,
-       orientation = NA,
-       show_legend = NA,
-       width = NULL,
-       facet_nrow = NULL,
-       facet_ncol = NULL,
-       title = "Histogram Plot",
-       x_title = NULL,
-       y_title = NULL
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
-elements: ‘character’ The name of the elements column in ‘data’ to
-          apply the function to.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station. Histogram plots are
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        elements:  The name of the elements column in 'data' to apply the function to..
+        station: The name of the station column in 'data', if the data are
+          for multiple station. Histogram plots are
           calculated separately for each station.
-
-facet_by: ‘character(1)’ Whether to facet by stations, elements, both,
+facet_by: Whether to facet by stations, elements, both,
           or neither. Options are ‘"stations"’, ‘"elements"’,
           ‘"station-elements"’, ‘"elements-stations"’, or ‘"none"’.
-
-position: ‘character(1)’ Position adjustment.
-
+position: Position adjustment.
 colour_bank: ‘character’ A string denoting colour values if ‘position
           == "layer"’. By default, colours from ‘ggplot2::luv_colours’
           are used.
-
    na_rm: ‘logical(1)’ If ‘FALSE’, the default, missing values are
           removed with a warning. If ‘TRUE’, missing values are
           silently removed.
-
 orientation: The orientation of the layer. The default (‘NA’)
           automatically determines the orientation from the aesthetic
           mapping. In the rare event that this fails it can be given
           explicitly by setting ‘orientation’ to either "x" or "y".
-
 show_legend: ‘logical(1)’ Should this layer be included in the legends?
-          ‘NA’, the default, includes if any aesthetics are mapped.
-          ‘FALSE’ never includes, and ‘TRUE’ always includes.
-
+          ‘NA’, the default, includes if any aesthetics are mapped.          ‘FALSE’ never includes, and ‘TRUE’ always includes.
    width: Bar width. By default, set to 90% of the resolution of the
           data.
-
 facet_nrow: ‘integer(1)’ Number of rows for the facets if ‘facet_by’ is
           one of ‘"stations"’ or ‘"elements"’. Only if ‘facet_ncol’ is
           given.
-
 facet_ncol: ‘integer(1)’ Number of rows for the facets if ‘facet_by’ is
           one of ‘"stations"’ or ‘"elements"’. Only if ‘facet_nrow’ is
           given.
-
-   title: ‘character(1)’ The text for the title.
-
- x_title: ‘character(1)’ The text for the x-axis.
-
- y_title: ‘character(1)’ The text for the y-axis.
- 
- Value:
-
+   title: The text for the title.
+ x_title: The text for the x-axis.
+ y_title: The text for the y-axis. 
+     Returns:
      a ‘ggplot’ object."""
     r_params: Dict = _get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
@@ -1387,114 +1004,52 @@ def inventory_plot(
     },
     coord_flip: bool = False,
 ):
-    """Produce an inventory of available and missing data
+    """Produce an inventory of available and missing data.
 
     Returns an inventory plot using ‘ggplot2’ that displays whether a value is 
     observed or missing for each element and station given. Takes a data frame 
     as an input and the relevant columns to create the plot.
 
-Usage:
-
-     inventory_plot(
-       data,
-       date_time,
-       elements,
-       station = NULL,
-       year = NULL,
-       doy = NULL,
-       year_doy_plot = FALSE,
-       facet_by = NULL,
-       facet_x_size = 7,
-       facet_y_size = 11,
-       title = "Inventory Plot",
-       plot_title_size = NULL,
-       plot_title_hjust = 0.5,
-       x_title = NULL,
-       y_title = NULL,
-       x_scale_from = NULL,
-       x_scale_to = NULL,
-       x_scale_by = NULL,
-       y_date_format = NULL,
-       y_date_scale_by = NULL,
-       y_date_scale_step = 1,
-       facet_scales = "fixed",
-       facet_dir = "h",
-       facet_x_margin = ggplot2::margin(1, 0, 1, 0),
-       facet_y_margin = ggplot2::margin(1, 0, 1, 0),
-       facet_nrow = NULL,
-       facet_ncol = NULL,
-       missing_colour = "red",
-       present_colour = "grey",
-       missing_label = "Missing",
-       present_label = "Present",
-       display_rain_days = FALSE,
-       rain = NULL,
-       rain_cats = list(breaks = c(0, 0.85, Inf), labels = c("Dry", "Rain"), key_colours =
-         c("tan3", "blue")),
-       coord_flip = FALSE
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
-elements: ‘character’ The name of the elements column in ‘data’ to
-          apply the function to.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station.
-
-    year: ‘character(1)’ The name of the year column in ‘data’. If
-          ‘NULL’ it will be created using
-          ‘lubridate::year(data[[date_time]])’.
-
-     doy: ‘character(1)’ The name of the day of the year (1-366) column
-          in ‘data’. If ‘doy’ is ‘NULL’ then it can be calculated as
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        elements:  The name of the elements column in 'data' to apply the function to..
+        station: The name of the station column in 'data', if the data are
+          for multiple station.
+    year: The name of the year column in 'data'. If
+          'None' it will be created using
+          'lubridate::year(data[[date_time]])'.
+     doy: The name of the day of the year (1-366) column
+          in 'data'. If ‘doy’ is 'None' then it can be calculated as
           ‘yday_366(data[[date_time]])’ if ‘date_time’ is provided.
-
 year_doy_plot: ‘logical(1)’ Whether the day of year should be on the
           y-axis on the plot.
-
-facet_by: ‘character(1)’ Whether to facet by stations, elements, or
+facet_by: Whether to facet by stations, elements, or
           both. Options are ‘"stations"’, ‘"elements"’,
           ‘"station-elements"’, ‘"elements-stations"’. In
           ‘"station-elements"’, stations are given as rows and elements
           as columns. In ‘"elements-stations"’, elements are given as
           rows and stations as columns.
-
 facet_x_size: ‘numeric(1)’ Text size for the facets on the x-axis in
           pts.
-
 facet_y_size: ‘numeric(1)’ Text size for the facets on the y-axis in
           pts.
-
-   title: ‘character(1)’ The text for the title.
-
+   title: The text for the title.
 plot_title_size: ‘numeric(1)’ Text size for the title in pts.
-
-plot_title_hjust: ‘numeric(1)’ Horizontal justification for title.
-          Value between 0 and 1.
-
- x_title: ‘character(1)’ The text for the x-axis.
-
- y_title: ‘character(1)’ The text for the y-axis.
-
+plot_title_hjust: ‘numeric(1)’ Horizontal justification for title.          Value between 0 and 1.
+ x_title: The text for the x-axis.
+ y_title: The text for the y-axis.
 x_scale_from: ‘integer(1)’ The year to display the inventory plot from.
-
 x_scale_to: ‘integer(1)’ The year to display the inventory plot to.
-
 x_scale_by: ‘integer(1)’ The difference, in years, to give the x tick
           marks between from and to.
-
 y_date_format: TODO
 
 y_date_scale_by: TODO
 
 y_date_scale_step: TODO
 
-facet_scales: ‘character(1)’ Are scales shared across all facets (the
+facet_scales: Are scales shared across all facets (the
           default, ‘"fixed"’), or do they vary across rows
           (‘"free_x"’), columns (‘"free_y"’), or both rows and columns
           (‘"free"’)?
@@ -1503,48 +1058,34 @@ facet_dir: TODO
 
 facet_x_margin: ‘numeric(4)’ Margin width around the text for the
           x-facets.
-
 facet_y_margin: ‘numeric(4)’ Margin width around the text for the
           y-facets.
-
 facet_nrow: ‘integer(1)’ Number of rows for the facets if ‘facet_by’ is
           one of ‘"stations"’ or ‘"elements"’. Only if ‘facet_ncol’ is
           given.
-
 facet_ncol: ‘integer(1)’ Number of rows for the facets if ‘facet_by’ is
           one of ‘"stations"’ or ‘"elements"’. Only if ‘facet_nrow’ is
           given.
-
-missing_colour: ‘character(1)’ Colour to represent the missing values.
-          Default ‘"red"’.
-
-present_colour: ‘character(1)’ Colour to represent the observed values.
-          Default ‘"grey"’.
-
-missing_label: ‘character(1)’ Label to give in legend for missing
+missing_colour: Colour to represent the missing values.          Default ‘"red"’.
+present_colour: Colour to represent the observed values.          Default ‘"grey"’.
+missing_label: Label to give in legend for missing
           values. Default ‘"Missing"’.
-
-present_label: ‘character(1)’ Label to give in legend for observed
+present_label: Label to give in legend for observed
           values. Default ‘"Present"’.
-
-display_rain_days: ‘logical(1)’ If ‘rain’ parameter is not ‘NULL’, and
+display_rain_days: ‘logical(1)’ If ‘rain’ parameter is not 'None', and
           ‘rain’ is not an element in the ‘elements’ parameter, whether
           to include dry and rainy days.
-
-    rain: ‘character(1)’ The name of the rain column in ‘data’.
-
+    rain: The name of the rain column in 'data'.
 rain_cats: TODO
 
 coord_flip: ‘logical(1)’ Whether to switch the x and y axes.
-
   labels: ‘character’ If ‘display_rain_days = TRUE’, the labels in the
           key for dry and rainy days. By default, ‘c("Dry", "Rain")’
 
 key_colours: ‘character’ If ‘display_rain_days = TRUE’, the colours for
           dry and rainy days. By default, ‘c("tan3", "blue"))’
 
-Value:
-
+    Returns:
      A plot of type ‘ggplot’ to the default plot device"""
 
     r_params: Dict = _get_r_params(locals())
@@ -1628,58 +1169,32 @@ def inventory_table(
     missing_indicator: str = "M",
     observed_indicator: str = "X",
 ) -> DataFrame:
-    """Create Inventory Table
+    """Create Inventory Table.
 
     Returns a table for each cell in a climatic data frame with an indicator to 
     show whether the corresponding cell value is missing or observed.
 
-Usage:
-
-     inventory_table(
-       data,
-       date_time,
-       elements,
-       station = NULL,
-       year = NULL,
-       month = NULL,
-       day = NULL,
-       missing_indicator = "M",
-       observed_indicator = "X"
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
-elements: ‘character’ The name of the elements column in ‘data’ to
-          apply the function to.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station. The inventory table is
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        elements:  The name of the elements column in 'data' to apply the function to..
+        station: The name of the station column in 'data', if the data are
+          for multiple station. The inventory table is
           calculated separately for each station.
-
-    year: ‘character(1)’ The name of the year column in ‘data’. If
-          ‘NULL’ it will be created using
-          ‘lubridate::year(data[[date_time]])’.
-
-   month: ‘character(1)’ The name of the month column in ‘data’. If
-          ‘NULL’ it will be created using
-          ‘lubridate::month(data[[date_time]])’.
-
-     day: ‘character(1)’ The name of the day column in ‘data’. If
-          ‘NULL’ it will be created using
+    year: The name of the year column in 'data'. If
+          'None' it will be created using
+          'lubridate::year(data[[date_time]])'.
+   month: The name of the month column in 'data'. If
+          'None' it will be created using
+          'lubridate::year(month[[date_time]])'.
+     day: The name of the day column in 'data'. If
+          'None' it will be created using
           ‘lubridate::day(data[[date_time]])’.
-
-missing_indicator: ‘character(1)’ Indicator to give if the data is
+missing_indicator: Indicator to give if the data is
           missing. Default ‘"M"’.
-
-observed_indicator: ‘character(1)’ Indicator to give if the data is
+observed_indicator: Indicator to give if the data is
           observed. Default ‘"X"’.
-
-Value:
-
+    Returns:
      A data.frame indicating if the value is missing or observed."""
 
     r_params: Dict = _get_r_params(locals())
@@ -1710,55 +1225,28 @@ def output_CPT(
     long_data: bool = True,
     na_code: int = -999,
 ) -> DataFrame:
-    """Outputs data in the format for the CPT software
+    """Outputs data in the format for the CPT software.
     
     Returns a data frame to a format suitable for use in the CPT software.
 
-Usage:
-
-     output_CPT(
-       data,
-       lat_lon_data,
-       station_latlondata,
-       latitude,
-       longitude,
-       station,
-       year,
-       element,
-       long_data = TRUE,
-       na_code = -999
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
+    Args:
+        data: The data frame to calculate from.
 lat_lon_data: ‘data.frame’ The name of the metadata to calculate from.
-
-station_latlondata: ‘character(1)’ The name of the station column in
-          ‘lat_lon_data’, or ‘data’ if ‘long_data = FALSE’.
-
-latitude: ‘character(1)’ The name of the latitude column in
-          ‘lat_lon_data’, or ‘data’ if ‘long_data = FALSE’.
-
-longitude: ‘character(1)’ The name of the longitude column in
-          ‘lat_lon_data’, or ‘data’ if ‘long_data = FALSE’.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station.
-
-    year: ‘character(1)’ The name of the year column in ‘data’.
-
- element: ‘character(1)’ The name of the element column in ‘data’ to
-          apply the function to.
-
-long_data: ‘logical(1)’ Whether all columns are in ‘data’. If all data
+station_latlondata: The name of the station column in
+          ‘lat_lon_data’, or 'data' if ‘long_data = FALSE’.
+latitude: The name of the latitude column in
+          ‘lat_lon_data’, or 'data' if ‘long_data = FALSE’.
+longitude: The name of the longitude column in
+          ‘lat_lon_data’, or 'data' if ‘long_data = FALSE’.
+        station: The name of the station column in 'data', if the data are
+          for multiple station.
+    year: The name of the year column in 'data'.
+ element: The name of the element column in 'data' to          apply the function to.
+long_data: ‘logical(1)’ Whether all columns are in 'data'. If all data
           is in one data frame then must have ‘long_data = TRUE’.
-
  na_code: ‘numeric(1)’ Indicator for NA values in data.
 
-Value:
-
+    Returns:
      A data.frame formatted for use in CPT."""
 
     r_params: Dict = _get_r_params(locals())
@@ -1797,86 +1285,44 @@ def timeseries_plot(
     x_title: str = None,
     y_title: str = None,
 ):
-    """Produce a timeseries graph
+    """Produce a timeseries graph.
 
     Returns a timeseries plot using ‘ggplot2’ for each element and station 
     given. Takes a data frame as an input and the relevant columns to create 
     the plot.
 
-Usage:
-
-     timeseries_plot(
-       data,
-       date_time,
-       elements,
-       station = NULL,
-       facet_by = c("stations", "elements", "stations-elements", "elements-stations",
-         "none"),
-       type = c("line", "bar"),
-       add_points = FALSE,
-       add_line_of_best_fit = FALSE,
-       se = TRUE,
-       add_path = FALSE,
-       add_step = FALSE,
-       na_rm = FALSE,
-       show_legend = NA,
-       title = "Timeseries Plot",
-       x_title = NULL,
-       y_title = NULL
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
-date_time: ‘Date’ The name of the date column in ‘data’.
-
-elements: ‘character’ The name of the elements column in ‘data’ to
-          apply the function to.
-
- station: ‘character(1)’ The name of the station column in ‘data’, if
-          the data are for multiple station. Timeseries plots are
+    Args:
+        data: The data frame to calculate from.
+        date_time: The name of the date column in 'data'.
+        elements:  The name of the elements column in 'data' to apply the function to..
+        station: The name of the station column in 'data', if the data are
+          for multiple station. Timeseries plots are
           calculated separately for each station.
-
-facet_by: ‘character(1)’ Whether to facet by stations, elements, both,
+facet_by: Whether to facet by stations, elements, both,
           or neither. Options are ‘"stations"’, ‘"elements"’,
           ‘"station-elements"’, ‘"elements-stations"’, or ‘"none"’.
-
-    type: ‘character(1)’ The type of plot, either "line" or line graphs
+    type: The type of plot, either "line" or line graphs
           or "bar" for bar graphs.
-
 add_points: ‘logical(1)’ If ‘TRUE’, points are added to the plot using
           ‘"ggplot2::geom_point()"’.
-
 add_line_of_best_fit: ‘logical(1)’ If ‘TRUE’, points are added to the
           plot using ‘"ggplot2::geom_smooth(method = "lm")"’.
-
-      se: ‘logical(1)’ If ‘TRUE’, the standard error is are added to
-          the line of best fit. Only works if ‘add_line_of_best_fit =
+      se: ‘logical(1)’ If ‘TRUE’, the standard error is are added to          the line of best fit. Only works if ‘add_line_of_best_fit =
           TRUE’.
-
 add_path: ‘logical(1)’ If ‘TRUE’, paths are added to the plot using
           ‘"ggplot2::geom_path()"’.
-
 add_step: ‘logical(1)’ If ‘TRUE’, steps are added to the plot using
           ‘"ggplot2::geom_step()"’.
-
    na_rm: ‘logical(1)’ If ‘FALSE’, the default, missing values are
           removed with a warning. If ‘TRUE’, missing values are
           silently removed.
-
 show_legend: ‘logical(1)’ Should this layer be included in the legends?
-          ‘NA’, the default, includes if any aesthetics are mapped.
-          ‘FALSE’ never includes, and ‘TRUE’ always includes.
+          ‘NA’, the default, includes if any aesthetics are mapped.          ‘FALSE’ never includes, and ‘TRUE’ always includes.
+   title: The text for the title.
+ x_title: The text for the x-axis.
+ y_title: The text for the y-axis.
 
-   title: ‘character(1)’ The text for the title.
-
- x_title: ‘character(1)’ The text for the x-axis.
-
- y_title: ‘character(1)’ The text for the y-axis.
-
-Value:
-
+    Returns:
      a ‘ggplot’ object."""
     r_params: Dict = _get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
@@ -1917,64 +1363,31 @@ def windrose(
     variable_wind: float = 990,
     n_col: int = None,
 ):
-    """Windrose from the clifro package
+    """Windrose from the clifro package.
 
     Returns a windrose plot using ‘ggplot2’ of wind speed and direction. This function is a wrapper of the ‘clifro::windrose()’ function.
 
-Usage:
-
-     windrose(
-       data,
-       speed,
-       direction,
-       facet_by = NULL,
-       n_directions = 12,
-       n_speeds = 5,
-       speed_cuts = NA,
-       col_pal = "GnBu",
-       ggtheme = c("grey", "gray", "bw", "linedraw", "light", "minimal", "classic"),
-       legend_title = "Wind Speed",
-       calm_wind = 0,
-       variable_wind = 990,
-       n_col = NULL
-     )
-
-Arguments:
-
-    data: ‘data.frame’ The data.frame to calculate from.
-
+    Args:
+        data: The data frame to calculate from.
    speed: ‘numeric’ A vector containing wind speeds.
-
 direction: ‘numeric’ A vector containing wind direction.
-
-facet_by: ‘character(1)’ Facets used to plot the various windroses.
-
+facet_by: Facets used to plot the various windroses.
 n_directions: ‘integer(1)’ The number of direction bins to plot (petals
           on the rose). The number of directions defaults to 12.
-
-n_speeds: ‘numeric(1)’ The number of equally spaced wind speed bins to
-          plot. This is used if speed_cuts is NA (default 5).
-
+n_speeds: ‘numeric(1)’ The number of equally spaced wind speed bins to          plot. This is used if speed_cuts is NA (default 5).
 speed_cuts: ‘numeric’ A vector containing the cut points for the wind
           speed intervals, or NA (default)
 
  col_pal: ‘character’ String indicating the name of the ‘RColorBrewer’
           colour palette to be used for plotting.
-
- ggtheme: ‘character(1)’ String (partially) matching the ‘ggtheme’ to
-          be used for plotting.
-
-legend_title: ‘character(1)’ Legend title.
-
+ ggtheme: String (partially) matching the ‘ggtheme’ to          be used for plotting.
+legend_title: Legend title.
 calm_wind: ‘numeric(1)’ The upper limit for wind speed that is
           considered calm (default 0).
-
 variable_wind: ‘numeric(1)’ Variable winds (if applicable).
-
    n_col: ‘integer(1)’ The number of columns to plot (default 1).
 
-Value:
-
+    Returns:
      a ‘ggplot’ object.
 
 See Also:
