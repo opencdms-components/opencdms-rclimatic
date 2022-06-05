@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from numpy import integer
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
 from rpy2.robjects import (
     NA_Character,
@@ -91,7 +91,7 @@ def climatic_extremes(
     Returns:
         A summary data frame containing minimum/maximum values for element(s).
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -118,7 +118,7 @@ def climatic_extremes(
         na_n_non=r_params["na_n_non"],
         names=r_params["names"],
     )
-    return _get_data_frame(r_data_frame)
+    return __get_data_frame(r_data_frame)
 
 
 def climatic_missing(
@@ -148,7 +148,7 @@ def climatic_missing(
     Returns:
         Data frame summarising the missing data.
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -157,7 +157,7 @@ def climatic_missing(
         start=r_params["start"],
         end=r_params["end"],
     )
-    return _get_data_frame(r_data_frame)
+    return __get_data_frame(r_data_frame)
 
 
 def climatic_summary(
@@ -235,7 +235,7 @@ def climatic_summary(
         A summary data frame for selected element(s) in climatic data.
     """
 
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
 
     r_params["summaries"] = StrVector(list(summaries.values()))
     r_params["summaries"].names = list(summaries.keys())
@@ -276,7 +276,7 @@ def climatic_summary(
         summaries_params=r_params["summaries_params"],
         names=r_params["names"],
     )
-    return _get_data_frame(r_data_frame)
+    return __get_data_frame(r_data_frame)
 
 
 def export_cdt(
@@ -334,8 +334,12 @@ def export_cdt(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
-    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
+
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
+    r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
     r_cdms_products.export_cdt(
         data=r_params["data"],
@@ -393,7 +397,7 @@ def export_cdt_daily(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_cdt_daily(
         data=r_params["data"],
         station=r_params["station"],
@@ -463,7 +467,7 @@ def export_cdt_dekad(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_cdt_dekad(
         data=r_params["data"],
         station=r_params["station"],
@@ -525,7 +529,7 @@ def export_climat_messages(
     Returns:
         Nothing.
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_climat_messages(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -589,7 +593,7 @@ def export_climdex(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_climdex(
         data=r_params["data"],
         prcp=r_params["prcp"],
@@ -649,7 +653,7 @@ def export_geoclim(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim(
         data=r_params["data"],
         year=r_params["year"],
@@ -710,7 +714,7 @@ def export_geoclim_dekad(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_dekad(
         data=r_params["data"],
         year=r_params["year"],
@@ -772,7 +776,7 @@ def export_geoclim_month(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_month(
         data=r_params["data"],
         year=r_params["year"],
@@ -832,7 +836,7 @@ def export_geoclim_pentad(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_pentad(
         data=r_params["data"],
         year=r_params["year"],
@@ -910,7 +914,7 @@ def histogram_plot(
     Returns:
         Nothing.
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -1056,10 +1060,10 @@ def inventory_plot(
         Nothing.
     """
 
-    r_params: Dict = _get_r_params(locals())
-    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
+    r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    # TODO translate none null facet margin parameters to R ggplot margin types
+    # translate none null facet margin parameters to R ggplot margin types
     if r_params["facet_x_margin"] == r_NULL:
         r_params["facet_x_margin"] = r_ggplot2.margin(1, 0, 1, 0)
     if r_params["facet_y_margin"] == r_NULL:
@@ -1163,8 +1167,8 @@ def inventory_table(
     Returns:
         A data frame indicating if the value is missing or observed.
     """
-    r_params: Dict = _get_r_params(locals())
-    r_params["data"] = _convert_posixt_to_r_date(r_params["data"])
+    r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
     r_data_frame: RDataFrame = r_cdms_products.inventory_table(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -1176,7 +1180,7 @@ def inventory_table(
         missing_indicator=r_params["missing_indicator"],
         observed_indicator=r_params["observed_indicator"],
     )
-    return _get_data_frame(r_data_frame)
+    return __get_data_frame(r_data_frame)
 
 
 def output_CPT(
@@ -1216,7 +1220,7 @@ def output_CPT(
         A data frame formatted for use in CPT.
     """
 
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.output_CPT(
         data=r_params["data"],
         lat_lon_data=r_params["lat_lon_data"],
@@ -1229,7 +1233,7 @@ def output_CPT(
         long_data=r_params["long_data"],
         na_code=r_params["na_code"],
     )
-    return _get_data_frame(r_data_frame)
+    return __get_data_frame(r_data_frame)
 
 
 def timeseries_plot(
@@ -1293,7 +1297,7 @@ def timeseries_plot(
     Returns:
         Nothing.
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -1361,7 +1365,7 @@ def windrose(
     Returns:
         Nothing.
     """
-    r_params: Dict = _get_r_params(locals())
+    r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.windrose(
         data=r_params["data"],
         speed=r_params["speed"],
@@ -1388,7 +1392,7 @@ def windrose(
     )
 
 
-def _get_r_params(params: Dict) -> Dict:
+def __get_r_params(params: Dict) -> Dict:
     """Returns a dictionary of parameters in R format.
 
     Converts each Python parameter in 'params' and converts it into an R 
@@ -1421,7 +1425,7 @@ def _get_r_params(params: Dict) -> Dict:
     return r_params
 
 
-def _get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
+def __get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
     """Converts an R format data frame into a Python format data frame.
 
     Converts 'r_data_frame' into a Python data frame and returns it.
@@ -1438,7 +1442,7 @@ def _get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
     return data_frame
 
 
-def _convert_posixt_to_r_date(r_data_frame: RDataFrame) -> RDataFrame:
+def __convert_posixt_to_r_date(r_data_frame: RDataFrame) -> RDataFrame:
     """Converts all Posix dates in a data frame, to 'Date` format.
 
     Converts all Posix dates in 'r_data_frame' into R 'Date' format and returns the 

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import filecmp
 import os
 
@@ -185,24 +185,12 @@ def test_climatic_summary():
 
 
 def test_export_cdt():
-    data_file: str = os.path.join(TEST_DIR, "data", "daily_summary_data_tz_mix.csv") #TODO
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_summary_data.csv")
     daily_summary_data = read_csv(
         data_file,
         parse_dates=["date"],
         na_values="NA",
     )
-
-    #TODO find tzone info in date field
-    """ date_no_tz = daily_summary_data.at[0,"date"]
-    daily_summary_data.at[0,"date"] = date_no_tz.replace(tzinfo=tzutc())
-    daily_summary_data.at[1,"date"] = daily_summary_data.at[1,"date"].replace(tzinfo=tzutc())
-    #timezone = pytz.timezone("UTC")
-    #daily_summary_data.at[0,"date"] = timezone.localize(date_no_tz)
-    date_updated = daily_summary_data.at[0,"date"]
-    date_tz = daily_summary_data.at[1,"date"] """
-    date0 = daily_summary_data.at[0,"date"]
-    date1 = daily_summary_data.at[1,"date"]
-    
 
     data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
     stations_niger = read_csv(
