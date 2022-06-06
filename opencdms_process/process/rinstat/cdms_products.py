@@ -397,7 +397,13 @@ def export_cdt_daily(
         Nothing.
     """
     # TODO forward args and kwargs to R function
+    
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
+
     r_cdms_products.export_cdt_daily(
         data=r_params["data"],
         station=r_params["station"],
@@ -467,7 +473,13 @@ def export_cdt_dekad(
         Nothing.
     """
     # TODO forward args and kwargs to R function
+    
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
+
     r_cdms_products.export_cdt_dekad(
         data=r_params["data"],
         station=r_params["station"],

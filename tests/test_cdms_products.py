@@ -223,11 +223,80 @@ def test_export_cdt():
 
 
 def test_export_cdt_daily():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_cdt_daily(data = daily_niger, station = "station_name", element = "rain", type = "daily",
+    #              date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
+    #              metadata = stations_niger, 
+    #              file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_cdt_daily_expected010.csv")
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", "export_cdt_daily_actual010.csv"
+    )
+    cdms_products.export_cdt_daily(
+        data=daily_niger,
+        station="station_name",
+        element="rain",
+        latitude="lat",
+        longitude="long",
+        altitude="alt",
+        type="daily",
+        date_time="date",
+        metadata=stations_niger,
+        file_path=output_file_actual,
+    )
+    assert __is_expected_file("export_cdt_daily_actual010.csv")
 
 
 def test_export_cdt_dekad():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "summary_data.csv")
+    summary_data = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_cdt_dekad(data = summary_data, station = "station_name", element = "sum_tmax",
+    #             date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
+    #             dekad = "dekad_date", metadata = stations_niger, 
+    #             file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_cdt_dekad_expected010.csv")
+
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", "export_cdt_dekad_actual010.csv"
+    )
+    cdms_products.export_cdt_dekad(
+        data=summary_data,
+        station="station_name",
+        element="sum_tmax",
+        latitude="lat",
+        longitude="long",
+        altitude="alt",
+        dekad="dekad_date",
+        date_time="date",
+        metadata=stations_niger,
+        file_path=output_file_actual,
+    )
+    assert __is_expected_file("export_cdt_dekad_actual010.csv")
 
 
 def test_export_climat_messages():
