@@ -541,7 +541,12 @@ def export_climat_messages(
     Returns:
         Nothing.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
+
     r_cdms_products.export_climat_messages(
         data=r_params["data"],
         date_time=r_params["date_time"],
@@ -605,7 +610,14 @@ def export_climdex(
         Nothing.
     """
     # TODO forward args and kwargs to R function
+    
+    # If dates in data frame do not include timezone data, then set to UTC
+    if date is not None:
+        data[date] = to_datetime(data[date], utc=True)
+
     r_params: Dict = __get_r_params(locals())
+    r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
+
     r_cdms_products.export_climdex(
         data=r_params["data"],
         prcp=r_params["prcp"],

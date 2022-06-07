@@ -35,7 +35,9 @@ def test_climatic_extremes():
         max_val=True,
         min_val=True,
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_extremes_actual010.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_extremes_actual010.csv"
+    )
 
     # test that Date cols are correctly calculated
     actual = cdms_products.climatic_extremes(
@@ -51,7 +53,9 @@ def test_climatic_extremes():
         n_dates=True,
         last_date=True,
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_extremes_actual020.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_extremes_actual020.csv"
+    )
 
 
 def test_climatic_missing():
@@ -73,7 +77,9 @@ def test_climatic_missing():
         elements=["rain", "tmax", "tmin", "sunh"],
         station_id="station_name",
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_missing_actual010.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_missing_actual010.csv"
+    )
 
 
 def test_climatic_summary():
@@ -94,7 +100,9 @@ def test_climatic_summary():
         na_rm=True,
         to="overall",
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual005.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual005.csv"
+    )
 
     actual = cdms_products.climatic_summary(
         data=dodoma,
@@ -104,7 +112,9 @@ def test_climatic_summary():
         na_rm=True,
         to="monthly",
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual010.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual010.csv"
+    )
 
     # test approx 55000 row dataframe with missing values
 
@@ -125,7 +135,9 @@ def test_climatic_summary():
         na_prop=0,
         to="monthly",
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual020.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual020.csv"
+    )
 
     # run selection of package `testhat` tests
 
@@ -148,7 +160,9 @@ def test_climatic_summary():
         to="monthly",
         summaries={"mean": "mean", "st_dv": "sd", "n_na": "naflex::na_n"},
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual030.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual030.csv"
+    )
 
     # test with data used in demo
 
@@ -169,7 +183,9 @@ def test_climatic_summary():
         to="annual",
         summaries={"mean": "mean", "max": "max", "min": "min"},
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual040.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual040.csv"
+    )
 
     # test summaries_params
     actual = cdms_products.climatic_summary(
@@ -181,7 +197,9 @@ def test_climatic_summary():
         to="overall",
         summaries_params={"mean": {"trim": 0.5}},
     )
-    assert __is_expected_dataframe(data=actual, file_name="climatic_summary_actual050.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="climatic_summary_actual050.csv"
+    )
 
 
 def test_export_cdt():
@@ -240,7 +258,7 @@ def test_export_cdt_daily():
 
     # export_cdt_daily(data = daily_niger, station = "station_name", element = "rain", type = "daily",
     #              date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
-    #              metadata = stations_niger, 
+    #              metadata = stations_niger,
     #              file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_cdt_daily_expected010.csv")
     output_file_actual: str = os.path.join(
         TEST_DIR, "results_actual", "export_cdt_daily_actual010.csv"
@@ -278,7 +296,7 @@ def test_export_cdt_dekad():
 
     # export_cdt_dekad(data = summary_data, station = "station_name", element = "sum_tmax",
     #             date_time = "date", latitude = "lat", longitude = "long", altitude = "alt",
-    #             dekad = "dekad_date", metadata = stations_niger, 
+    #             dekad = "dekad_date", metadata = stations_niger,
     #             file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_cdt_dekad_expected010.csv")
 
     output_file_actual: str = os.path.join(
@@ -300,23 +318,116 @@ def test_export_cdt_dekad():
 
 
 def test_export_climat_messages():
-    pass
+    pass  # TODO
 
 
 def test_export_climdex():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    daily_niger = read_csv(
+        data_file,
+        parse_dates=["date"],
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_climdex(data = daily_niger, date = "date", prcp = "rain", tmax = "tmax", tmin = "tmin",
+    #       file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_climdex_expected010")
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", "export_climdex_actual010"
+    )
+    cdms_products.export_climdex(
+        data=daily_niger,
+        date="date",
+        prcp="rain",
+        tmax="tmax",
+        tmin="tmin",
+        file_path=output_file_actual,
+    )
+    assert __is_expected_file("export_climdex_actual010.csv")
 
 
 def test_export_geoclim():
-    pass
+    data_file: str = os.path.join(TEST_DIR, "data", "summary_data_dekad.csv")
+    summary_data_dekad = read_csv(
+        data_file,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_geoclim(data = summary_data, year = "year",
+    #    station_id = "station_name",
+    #    type_col = "dekad",
+    #    element = "mean_rain", metadata = stations_niger,
+    #    join_by = "station_name",
+    #    latitude = "lat", longitude = "long",
+    #    file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_geoclim_expected010.csv")
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", "export_geoclim_actual010"
+    )
+    cdms_products.export_geoclim(
+        data=summary_data_dekad,
+        year="year",
+        station_id="station_name",
+        type_col="dekad",
+        element="mean_rain",
+        metadata=stations_niger,
+        join_by="station_name",
+        latitude="lat",
+        longitude="long",
+        file_path=output_file_actual,
+    )
+    assert __is_expected_file("export_geoclim_actual010.csv")
 
 
 def test_export_geoclim_dekad():
+    # TODO This test can be added when https://github.com/IDEMSInternational/cdms.products/issues/87 is resolved
     pass
 
 
 def test_export_geoclim_month():
-    pass
+    data_file: str = os.path.join(
+        TEST_DIR, "data", "summary_data_export_geoclim_month.csv"
+    )
+    summary_data = read_csv(
+        data_file,
+        na_values="NA",
+    )
+
+    data_file = os.path.join(TEST_DIR, "data", "stations_niger.csv")
+    stations_niger = read_csv(
+        data_file,
+        dayfirst=True,
+        na_values="NA",
+    )
+
+    # export_geoclim_month(data = summary_data, year = "year", month = "month",
+    #   station_id = "station_name",
+    #   element = "mean_rain", metadata = stations_niger,
+    #   join_by = "station_name",
+    #   latitude = "lat", longitude = "long",
+    #  file_path = "C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\export_geoclim_month_expected010.csv")
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", "export_geoclim_month_actual010.csv"
+    )
+    cdms_products.export_geoclim_month(
+        data=summary_data,
+        year="year",
+        month="month",
+        station_id="station_name",
+        element="mean_rain",
+        metadata=stations_niger,
+        join_by="station_name",
+        latitude="lat",
+        longitude="long",
+        file_path=output_file_actual,
+    )
+    assert __is_expected_file("export_geoclim_month_actual010.csv")
 
 
 def test_export_geoclim_pentad():
@@ -603,7 +714,9 @@ def test_inventory_table():
         month="month",
         day="day",
     )
-    assert __is_expected_dataframe(data=actual, file_name="inventory_table_actual010.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="inventory_table_actual010.csv"
+    )
 
     # Functions output for all elements for day
     actual = cdms_products.inventory_table(
@@ -615,7 +728,9 @@ def test_inventory_table():
         month="month",
         day="day",
     )
-    assert __is_expected_dataframe(data=actual, file_name="inventory_table_actual020.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="inventory_table_actual020.csv"
+    )
 
     # Functions output for one element (rain) for doy
     actual = cdms_products.inventory_table(
@@ -627,7 +742,9 @@ def test_inventory_table():
         month="month",
         day="doy",
     )
-    assert __is_expected_dataframe(data=actual, file_name="inventory_table_actual030.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="inventory_table_actual030.csv"
+    )
 
     # Functions output for all elements for doy
     actual = cdms_products.inventory_table(
@@ -639,7 +756,9 @@ def test_inventory_table():
         month="month",
         day="doy",
     )
-    assert __is_expected_dataframe(data=actual, file_name="inventory_table_actual040.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="inventory_table_actual040.csv"
+    )
 
 
 def test_output_CPT():
