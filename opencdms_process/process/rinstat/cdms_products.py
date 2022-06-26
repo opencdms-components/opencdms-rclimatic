@@ -1,18 +1,14 @@
+import logging
+import os
 from typing import Dict, List
 
+import rpy2
 from numpy import integer
 from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import (
-    NA_Character,
-    NA_Logical,
-    conversion,
-    default_converter,
-    globalenv,
-    packages,
-    pandas2ri,
-    r,
-)
+from rpy2.robjects import (NA_Character, NA_Logical, conversion,
+                           default_converter, globalenv, packages, pandas2ri,
+                           r)
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
 
@@ -397,7 +393,7 @@ def export_cdt_daily(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    
+
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
@@ -473,7 +469,7 @@ def export_cdt_dekad(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    
+
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
@@ -610,7 +606,7 @@ def export_climdex(
         Nothing.
     """
     # TODO forward args and kwargs to R function
-    
+
     # If dates in data frame do not include timezone data, then set to UTC
     if date is not None:
         data[date] = to_datetime(data[date], utc=True)
@@ -898,10 +894,16 @@ def histogram_plot(
 ):
     """Produce a histogram of elements by station.
 
-    Returns a histogram using 'ggplot2' for each element and station given.
+    Creates a histogram using 'ggplot2' for each element and station given.
     Takes a data frame as an input and the relevant columns to create the plot.
+    Writes the histogram to a JPEG file.
 
     Args:
+        path: The location to write the JPEG output file.
+        file_name: The name of the JPEG output file.
+          The log file name is the same except that the file name extension is
+          replaced with ".log". For example, if 'file_name' is "my_plot.jpg",
+          then the log file is "my_plot.log". TODO
         data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
         elements: The name of the elements column in 'data' to apply the
@@ -938,6 +940,13 @@ def histogram_plot(
     Returns:
         Nothing.
     """
+    # TODO this function provides an example of creating a log file.
+    #    If needed, this log mechanism could also be used for other functions.
+    # from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
+    # file_name_log = os.path.join(path, os.path.splitext(file_name)[0] + ".log")
+    # log_file_handler = logging.FileHandler(file_name_log)
+    # rpy2_logger.addHandler(log_file_handler)
+
     r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
         data=r_params["data"],
@@ -1013,11 +1022,14 @@ def inventory_plot(
 ):
     """Produce an inventory of available and missing data.
 
-    Returns an inventory plot using 'ggplot2' that displays whether a value is
+    Creates an inventory plot using 'ggplot2' that displays whether a value is
     observed or missing for each element and station given. Takes a data frame
     as an input and the relevant columns to create the plot.
+    Writes the plot to a JPEG file.
 
     Args:
+        path: The location to write the JPEG output file.
+        file_name: The name of the JPEG output file.
         data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
         elements: The name of the elements column in 'data' to apply the
@@ -1282,11 +1294,14 @@ def timeseries_plot(
 ):
     """Produce a timeseries graph.
 
-    Returns a timeseries plot using 'ggplot2' for each element and station
+    Creates a timeseries plot using 'ggplot2' for each element and station
     given. Takes a data frame as an input and the relevant columns to create
     the plot.
+    Writes the plot to a JPEG file.
 
     Args:
+        path: The location to write the JPEG output file.
+        file_name: The name of the JPEG output file.
         data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
         elements: The name of the elements column in 'data' to apply
@@ -1362,10 +1377,13 @@ def windrose(
 ):
     """Produce a windrose graph from the clifro package.
 
-    Returns a windrose plot using 'ggplot2' of wind speed and direction. 
+    Creates a windrose plot using 'ggplot2' of wind speed and direction.
     This function is a wrapper of the 'clifro::windrose()' function.
+    Writes the plot to a JPEG file.
 
     Args:
+        path: The location to write the JPEG output file.
+        file_name: The name of the JPEG output file.
         data: The data frame to calculate from.
         speed: A vector containing wind speeds.
         direction: A vector containing wind direction.
@@ -1419,16 +1437,16 @@ def windrose(
 def __get_r_params(params: Dict) -> Dict:
     """Returns a dictionary of parameters in R format.
 
-    Converts each Python parameter in 'params' and converts it into an R 
-    parameter suitable for passing to rpy2. Returns the R parameters as a 
+    Converts each Python parameter in 'params' and converts it into an R
+    parameter suitable for passing to rpy2. Returns the R parameters as a
     dictionary.
-    
+
     Args:
-        params: A dictionary of Python parameters, normally populated by 
+        params: A dictionary of Python parameters, normally populated by
           calling `locals()`.
-    
+
     Returns:
-        A dictionary of parameters. Each parameter is in an R format suitable 
+        A dictionary of parameters. Each parameter is in an R format suitable
         for passing to rpy2.
     """
     r_params: Dict = params.copy()
@@ -1453,10 +1471,10 @@ def __get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
     """Converts an R format data frame into a Python format data frame.
 
     Converts 'r_data_frame' into a Python data frame and returns it.
-    
+
     Args:
         r_data_frame: A data frame in rpy2 R format.
-    
+
     Returns:
         The data frame converted into Python format.
     """
@@ -1469,12 +1487,12 @@ def __get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
 def __convert_posixt_to_r_date(r_data_frame: RDataFrame) -> RDataFrame:
     """Converts all Posix dates in a data frame, to 'Date` format.
 
-    Converts all Posix dates in 'r_data_frame' into R 'Date' format and returns the 
+    Converts all Posix dates in 'r_data_frame' into R 'Date' format and returns the
     updated R data frame.
-    
+
     Args:
         r_data_frame: A data frame in rpy2 R format.
-    
+
     Returns:
         The R data frame with all Posix dates converted into 'Date' format.
     """
