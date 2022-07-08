@@ -1,8 +1,5 @@
-import logging
-import os
 from typing import Dict, List
 
-import rpy2
 from numpy import integer
 from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
@@ -861,9 +858,6 @@ def histogram_plot(
     Args:
         path: The location to write the JPEG output file.
         file_name: The name of the JPEG output file.
-          The log file name is the same except that the file name extension is
-          replaced with ".log". For example, if 'file_name' is "my_plot.jpg",
-          then the log file is "my_plot.log". TODO
         data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
         elements: The name of the elements column in 'data' to apply the
@@ -900,13 +894,6 @@ def histogram_plot(
     Returns:
         Nothing.
     """
-    # TODO this function provides an example of creating a log file.
-    #    If needed, this log mechanism could also be used for other functions.
-    # from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
-    # file_name_log = os.path.join(path, os.path.splitext(file_name)[0] + ".log")
-    # log_file_handler = logging.FileHandler(file_name_log)
-    # rpy2_logger.addHandler(log_file_handler)
-
     r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
         data=r_params["data"],
