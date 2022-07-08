@@ -289,8 +289,6 @@ def export_cdt(
     month: str = None,
     dekad: str = None,
     metadata: DataFrame = None,
-    *args,
-    **kwargs
 ):
     """Export daily or dekadal data in the format for CDT.
 
@@ -323,14 +321,10 @@ def export_cdt(
           specified, 'latitude, 'longitude and 'altitude' are assumed to be in
           'metadata' and 'station' must be in both 'data' and 'metadata' to
           facilitate joining.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'.
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
-
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
@@ -392,8 +386,6 @@ def export_cdt_daily(
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
-
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
@@ -427,8 +419,6 @@ def export_cdt_dekad(
     month: str = None,
     dekad: str = None,
     metadata: DataFrame = None,
-    *args,
-    **kwargs
 ):
     """Export dekad data in CDT format.
 
@@ -462,14 +452,10 @@ def export_cdt_dekad(
           'metadata' and 'station' must be in both 'data' and 'metadata' to
           facilitate joining.
         file_path: The file path and file name to export.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
-
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
@@ -575,8 +561,6 @@ def export_climdex(
     month: str = None,
     day: str = None,
     file_type: str = "csv",
-    *args,
-    **kwargs
 ):
     """Export data in the format for RClimDex.
 
@@ -599,14 +583,10 @@ def export_climdex(
           be created using 'lubridate::day(data[[date]])'.
         file_type: The file type to export as either 'csv' or 'txt'.
         file_path: The file path and file name to export.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.table()'
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
-
     # If dates in data frame do not include timezone data, then set to UTC
     if date is not None:
         data[date] = to_datetime(data[date], utc=True)
@@ -641,8 +621,6 @@ def export_geoclim(
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    *args,
-    **kwargs
 ):
     """Exports dekad or pentad data in GeoCLIM format.
 
@@ -666,13 +644,10 @@ def export_geoclim(
         add_cols: Names of additional metadata columns that should be included
           in the output.
         file_path: The file path and file name to export.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim(
         data=r_params["data"],
@@ -702,8 +677,6 @@ def export_geoclim_dekad(
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    *args,
-    **kwargs
 ):
     """Exports dekad data in GeoCLIM format.
 
@@ -727,13 +700,10 @@ def export_geoclim_dekad(
         join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
         add_cols: Names of additional metadata columns that should be included
           in the output.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_dekad(
         data=r_params["data"],
@@ -762,8 +732,6 @@ def export_geoclim_month(
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    *args,
-    **kwargs
 ):
     """Export monthly data in GeoCLIM format.
 
@@ -789,13 +757,10 @@ def export_geoclim_month(
         join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
         add_cols: Names of additional metadata columns that should be included
           in the output.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'.
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_month(
         data=r_params["data"],
@@ -824,8 +789,6 @@ def export_geoclim_pentad(
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
-    *args,
-    **kwargs
 ):
     """Export pentad data in GeoCLIM format.
 
@@ -849,13 +812,10 @@ def export_geoclim_pentad(
         join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
         add_cols: Names of additional metadata columns that should be included
           in the output.
-        args: TODO
-        kwargs: TODO Other parameters passed to 'write.csv()'
 
     Returns:
         Nothing.
     """
-    # TODO forward args and kwargs to R function
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_pentad(
         data=r_params["data"],
@@ -1095,7 +1055,6 @@ def inventory_plot(
     Returns:
         Nothing.
     """
-
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
@@ -1255,7 +1214,6 @@ def output_CPT(
     Returns:
         A data frame formatted for use in CPT.
     """
-
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.output_CPT(
         data=r_params["data"],
