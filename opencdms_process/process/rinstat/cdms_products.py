@@ -1042,6 +1042,9 @@ def inventory_plot(
     Returns:
         Nothing.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 

@@ -615,7 +615,6 @@ def test_inventory_plot():
     assert __is_expected_file(file_name_actual)
 
     # Create an inventory plot by year and day of year
-    # TODO Python plot has slightly more data than R plot
     file_name_actual: str = "inventory_plot_actual020.jpg"
     actual = cdms_products.inventory_plot(
         path=output_path_actual,
