@@ -643,9 +643,14 @@ def test_inventory_plot():
 
 
 def test_inventory_table():
+    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+    '''
+    Note: `inventory_table()` was updated to format the date column before the R function is called. 
+          Therefore it is no longer possible to trigger the R exception. The test below is 
+          commented out rather than deleted, because it provides an example of how to catch and test 
+          for an exception raised in the R code. 
 
     # test with data that has invalid format for date column, should trigger exception
-    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
     daily_niger = read_csv(
         data_file,
         # parse_dates=["date"],
@@ -672,6 +677,7 @@ def test_inventory_table():
             "'Date', not 'character'.\n"
         )
         assert actual == expected
+    '''
 
     # read in correctly formatted data
     daily_niger = read_csv(

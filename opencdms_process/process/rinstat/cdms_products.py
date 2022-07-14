@@ -84,6 +84,9 @@ def climatic_extremes(
     Returns:
         A summary data frame containing minimum/maximum values for element(s).
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(
         data=r_params["data"],
@@ -141,6 +144,9 @@ def climatic_missing(
     Returns:
         Data frame summarising the missing data.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
         data=r_params["data"],
@@ -227,6 +233,8 @@ def climatic_summary(
     Returns:
         A summary data frame for selected element(s) in climatic data.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
 
     r_params: Dict = __get_r_params(locals())
 
@@ -894,6 +902,9 @@ def histogram_plot(
     Returns:
         Nothing.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.histogram_plot(
         data=r_params["data"],
@@ -1152,6 +1163,9 @@ def inventory_table(
     Returns:
         A data frame indicating if the value is missing or observed.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
     r_data_frame: RDataFrame = r_cdms_products.inventory_table(
@@ -1284,6 +1298,9 @@ def timeseries_plot(
     Returns:
         Nothing.
     """
+    # If dates in data frame do not include timezone data, then set to UTC
+    data[date_time] = to_datetime(data[date_time], utc=True)
+
     r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.timeseries_plot(
         data=r_params["data"],
