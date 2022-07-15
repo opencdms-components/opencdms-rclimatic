@@ -26,6 +26,64 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+"""Provides a set of tests for the `cdms_products` module.
+
+The tests in this module:
+  - Aim to verify that the wrapper functions in the `cdms_product` module 
+    generate output that is equivalent to calling the R function directly.
+  - Are based on the tests in the `cdms.products` R package.
+  - Do not try to validate the correctness of the R functions (this is the job 
+    of the `cdms.products` R package tests).
+
+If we want to add extra tests, then we should call the equivalent R functions 
+directly and verify that the output is equivalent to the wrapper function. 
+We can then save the Python output as the expected output for future test runs.
+Here are some R code examples:
+```
+library('cdms.products')
+niger50 <- daily_niger %>%
+  dplyr::filter(year == 1950)
+
+# climatic_extremes
+climatic_extremes010 <- climatic_extremes(data=niger50,  date_time="date",  
+        year="year",  month="month",  to="monthly",  station="station_name",  
+        elements=c("tmax"),  max_val=TRUE,  min_val=TRUE)
+
+# histogram_plot
+agades <- niger50 %>%
+  dplyr::filter(station_name == "Agades")
+t1 <- histogram_plot(data = agades, date_time = "date", 
+                     elements = c("tmin", "tmax"), facet_by = "elements")
+
+#inventory_plot
+mydata <- read.csv("C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\observationFinalMinimal.csv")
+df <- data.frame(mydata)
+df$obsDatetime <- as.Date(df$obsDatetime,format="%d/%m/%Y %H:%M")
+r_plot <- inventory_plot(data=df, station="ï..recordedFrom", 
+        elements=c("obsValue"),date_time="obsDatetime")
+ggplot2::ggsave(filename="inventory_plot01.jpg", plot=r_plot, device="jpeg", 
+        path="C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads", 
+        width = 25,  height = 20,  units = "cm")
+
+#export_cdt
+yearly_niger <- daily_niger %>% dplyr::group_by(station_name, year) %>% 
+        dplyr::summarise(mean_rain = mean(rain))
+output_CPT(data = yearly_niger, lat_lon_data = stations_niger, 
+        station_latlondata = "station_name", latitude = "lat", longitude = "long", 
+        station = "station_name", year = "year", element = "mean_rain")
+actual <- export_cdt(
+  data=daily_niger,
+  date_time="date",
+  element="rain",
+  station="station_name",
+  latitude="lat",
+  longitude="long",
+  altitude="alt",
+  metadata=stations_niger
+)
+```
+"""
+
 import filecmp
 import os
 

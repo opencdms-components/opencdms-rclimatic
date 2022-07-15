@@ -26,6 +26,24 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # =================================================================
+"""Provides a set of wrapper functions for the `cdms.products` R package.
+
+This module provides access to the `cdms.products` R package
+(https://github.com/IDEMSInternational/cdms.products).
+It communicates with the R environment using the `rpy2` package.
+Access is provided through a set of wrapper functions. 
+Each wrapper function:
+  - Allows the equivalent R function to be called from Python, using Python 
+    data types.
+  - Has a parameter list that is  as close as possible to the equivalent R 
+    function's parameter list.
+  - Returns it's result as a platform independent object, typically a Python 
+    pandas data frame, or a link to a JPEG file.
+  - Has a similar structure. First it converts the Python parameters (as 
+    needed) into R equivalent data types used by `rpy2`. It calls the R 
+    function. If needed, it converts the returned result into a Python data 
+    type.
+"""
 from typing import Dict, List
 
 from numpy import integer
