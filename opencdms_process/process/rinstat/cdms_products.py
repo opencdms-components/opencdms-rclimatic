@@ -31,17 +31,17 @@
 This module provides access to the `cdms.products` R package
 (https://github.com/IDEMSInternational/cdms.products).
 It communicates with the R environment using the `rpy2` package.
-Access is provided through a set of wrapper functions. 
+Access is provided through a set of wrapper functions.
 Each wrapper function:
-  - Allows the equivalent R function to be called from Python, using Python 
+  - Allows the equivalent R function to be called from Python, using Python
     data types.
-  - Has a parameter list that is  as close as possible to the equivalent R 
+  - Has a parameter list that is  as close as possible to the equivalent R
     function's parameter list.
-  - Returns it's result as a platform independent object, typically a Python 
+  - Returns it's result as a platform independent object, typically a Python
     pandas data frame, or a link to a JPEG file.
-  - Has a similar structure. First it converts the Python parameters (as 
-    needed) into R equivalent data types used by `rpy2`. It calls the R 
-    function. If needed, it converts the returned result into a Python data 
+  - Has a similar structure. First it converts the Python parameters (as
+    needed) into R equivalent data types used by `rpy2`. It calls the R
+    function. If needed, it converts the returned result into a Python data
     type.
 """
 from typing import Dict, List
@@ -62,14 +62,14 @@ r_ggplot2 = packages.importr("ggplot2")
 def climatic_extremes(
     data: DataFrame,
     date_time: str,
-    elements: List[str] = [],
+    elements: List[str] = None,
     station: str = None,
     year: str = None,
     month: str = None,
     dekad: str = None,
     pentad: str = None,
     to: str = "hourly",
-    by: List[str] = [],
+    by: List[str] = None,
     doy: str = None,
     doy_first: integer = 1,
     doy_last: integer = 366,
@@ -132,7 +132,6 @@ def climatic_extremes(
     """
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
-
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(
         data=r_params["data"],
@@ -209,17 +208,17 @@ def climatic_summary(
     data: DataFrame,
     date_time: str,
     station: str = None,
-    elements: List[str] = [],
+    elements: List[str] = None,
     year: str = None,
     month: str = None,
     dekad: str = None,
     pentad: str = None,
     to: str = "hourly",
-    by: List[str] = [],
+    by: List[str] = None,
     doy: str = None,
     doy_first: integer = 1,
     doy_last: integer = 366,
-    summaries: Dict[str, str] = {"n": "dplyr::n"},
+    summaries: Dict[str, str] = None,
     na_rm: bool = False,
     na_prop: integer = None,
     na_n: integer = None,
@@ -228,7 +227,7 @@ def climatic_summary(
     first_date: bool = False,
     n_dates: bool = False,
     last_date: bool = False,
-    summaries_params: Dict[str, Dict] = {},
+    summaries_params: Dict[str, Dict] = None,
     names: str = "{.fn}_{.col}",
 ) -> DataFrame:
     """Calculate summaries from climatic data.
@@ -280,6 +279,13 @@ def climatic_summary(
         A summary data frame for selected element(s) in climatic data.
     """
     # If dates in data frame do not include timezone data, then set to UTC
+
+    if summaries is None:
+        summaries = {"n": "dplyr::n"}
+
+    if summaries_params is None:
+        summaries_params = {}
+
     data[date_time] = to_datetime(data[date_time], utc=True)
 
     r_params: Dict = __get_r_params(locals())
