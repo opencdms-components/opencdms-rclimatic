@@ -1384,7 +1384,7 @@ def windrose(
     facet_by: List[str] = None,
     n_directions: int = 12,
     n_speeds: int = 5,
-    speed_cuts: List[float] = [],
+    speed_cuts: List[float] = 0,
     col_pal: str = "GnBu",
     ggtheme: str = "grey",
     legend_title="Wind Speed",
