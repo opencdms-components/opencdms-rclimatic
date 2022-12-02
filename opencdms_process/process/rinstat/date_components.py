@@ -13,9 +13,9 @@ import time
 # Question: what format will this come in from the database?
 # start_month, the month (1 to 12) to start the year in. Default is 1 to start on 1 January.
 # e.g. start_month = 8 defines a year from 1 August to 31 July.
-# In such cases year_num returns the calendar year of the beginning of the year 
-# e.g. year_num(["2020/08/10", "2021/01/20"], start_month = 8) = c(2020, 2020)  
-def year_num(dates, start_month = 1):
+# In such cases year_num returns the calendar year of the beginning of the year
+# e.g. year_num(["2020/08/10", "2021/01/20"], start_month = 8) = c(2020, 2020)
+def year_num(dates, start_month=1):
     # Display errors from R, but not warnings
     rpy2_logger.setLevel(logging.ERROR)
 
@@ -23,7 +23,7 @@ def year_num(dates, start_month = 1):
 
     script = os.path.join(
         os.path.dirname(__file__),
-        'yday_366.r',
+        "yday_366.r",
     )
     r.source(script)
 
@@ -34,10 +34,11 @@ def year_num(dates, start_month = 1):
     _dates = base.as_Date(dates)
     _start_month = ro.vectors.IntVector([start_month])
 
-    ro.globalenv['dates'] = _dates
-    ro.globalenv['start_month'] = start_month
+    ro.globalenv["dates"] = _dates
+    ro.globalenv["start_month"] = start_month
 
-    r('''
+    r(
+        """
 
     library("lubridate")
     if (!start_month %in% 1:12) stop("start_month must be an integer between 1 and 12. ", start_month, " is invalid.")
@@ -52,8 +53,9 @@ def year_num(dates, start_month = 1):
         year_col <- s_year
     }
 
-    ''')
-    year_data = ro.globalenv['year_col']
+    """
+    )
+    year_data = ro.globalenv["year_col"]
     # Is this the correct Python structure to return?
     year_data = np.array(year_data)
     return year_data

@@ -13,7 +13,7 @@ def windrose(obs):
 
     script = os.path.join(
         os.path.dirname(__file__),
-        'windrose.r',
+        "windrose.r",
     )
 
     r.source(script)
@@ -21,9 +21,10 @@ def windrose(obs):
     with localconverter(default_converter + pandas2ri.converter):
         _obs = conversion.py2rpy(obs)
 
-    globalenv['observations'] = _obs
+    globalenv["observations"] = _obs
 
-    r(f"""
+    r(
+        f"""
 library('magick')
 
 figure <- image_graph(width = 350, height = 350, res = 96)
@@ -34,8 +35,9 @@ data=cbind(ob_time, data[,3:4])
 windrose(data,'838','Bracknell Beaufort Park')
 
 image <- image_write(figure, path = NULL, format = "png")
-    """)
-    image_data = globalenv['image']
+    """
+    )
+    image_data = globalenv["image"]
     image = Image.open(BytesIO(bytes(image_data)))
 
     return image

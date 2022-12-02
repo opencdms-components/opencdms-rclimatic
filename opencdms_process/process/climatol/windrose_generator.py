@@ -11,83 +11,67 @@ LOGGER = logging.getLogger(__name__)
 
 #: Process metadata and description
 PROCESS_METADATA = {
-    'version': '0.2.0',
-    'id': 'windrose-generator',
-    'title': {
-        'en': 'Windrose Generator'
+    "version": "0.2.0",
+    "id": "windrose-generator",
+    "title": {"en": "Windrose Generator"},
+    "description": {
+        "en": "Generates windrose chart.",
     },
-    'description': {
-        'en': 'Generates windrose chart.',
-    },
-    'keywords': ['windrose-generator', 'opencdms'],
-    'links': [],
-    'inputs': {
-        'src_id': {
-            'title': 'Source ID',
-            'description': 'Source ID of the observation data.',
-            'schema': {
-                'type': 'integer'
-            },
-            'minOccurs': 1,
-            'maxOccurs': 1,
-            'metadata': None,  # TODO how to use?
-            'keywords': ['src_id', 'personal']
+    "keywords": ["windrose-generator", "opencdms"],
+    "links": [],
+    "inputs": {
+        "src_id": {
+            "title": "Source ID",
+            "description": "Source ID of the observation data.",
+            "schema": {"type": "integer"},
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "metadata": None,  # TODO how to use?
+            "keywords": ["src_id", "personal"],
         },
-        'period': {
-            'title': 'Period',
-            'description': 'Period of the observation data.',
-            'schema': {
-                'type': 'string'
-            },
-            'minOccurs': 1,
-            'maxOccurs': 1,
-            'metadata': None,  # TODO how to use?
-            'keywords': ['period', 'midas-open']
+        "period": {
+            "title": "Period",
+            "description": "Period of the observation data.",
+            "schema": {"type": "string"},
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "metadata": None,  # TODO how to use?
+            "keywords": ["period", "midas-open"],
         },
-        'year': {
-            'title': 'Year',
-            'description': 'Year of the observation data.',
-            'schema': {
-                'type': 'integer'
-            },
-            'minOccurs': 1,
-            'maxOccurs': 1,
-            'metadata': None,  # TODO how to use?
-            'keywords': ['year', 'midas-open']
+        "year": {
+            "title": "Year",
+            "description": "Year of the observation data.",
+            "schema": {"type": "integer"},
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "metadata": None,  # TODO how to use?
+            "keywords": ["year", "midas-open"],
         },
-        'elements': {
-            'title': 'Elements',
-            'description': 'Elements of the observation data.',
-            'schema': {
-                'type': 'array',
-                'items': {
-                    'type': 'string'
-                }
-            },
-            'minOccurs': 1,
-            'maxOccurs': 1,
-            'metadata': None,  # TODO how to use?
-            'keywords': ['elements', 'midas-open']
+        "elements": {
+            "title": "Elements",
+            "description": "Elements of the observation data.",
+            "schema": {"type": "array", "items": {"type": "string"}},
+            "minOccurs": 1,
+            "maxOccurs": 1,
+            "metadata": None,  # TODO how to use?
+            "keywords": ["elements", "midas-open"],
         },
     },
-    'outputs': {
-        'windrose': {
-            'title': 'Windrose chart',
-            'description': 'Return a chart with windrose visualization.',
-            'schema': {
-                'type': 'object',
-                'contentMediaType': 'application/json'
-            }
+    "outputs": {
+        "windrose": {
+            "title": "Windrose chart",
+            "description": "Return a chart with windrose visualization.",
+            "schema": {"type": "object", "contentMediaType": "application/json"},
         }
     },
-    'example': {
-        'inputs': {
-            'src_id': 838,
-            'period': 'hourly',
-            'year': 1991,
-            'elements': ['wind_speed', 'wind_direction'],
+    "example": {
+        "inputs": {
+            "src_id": 838,
+            "period": "hourly",
+            "year": 1991,
+            "elements": ["wind_speed", "wind_direction"],
         }
-    }
+    },
 }
 
 
@@ -127,23 +111,22 @@ class WindroseProcessor(BaseProcessor):
         super().__init__(processor_def, PROCESS_METADATA)
 
     def execute(self, data):
-        mimetype = 'application/json'
+        mimetype = "application/json"
         filters = {
-            'src_id': 838,
-            'period': 'hourly',
-            'year': 1991,
-            'elements': ['wind_speed', 'wind_direction'],
+            "src_id": 838,
+            "period": "hourly",
+            "year": 1991,
+            "elements": ["wind_speed", "wind_direction"],
         }
 
-        if not {'src_id', 'period', 'year', 'elements'} - set(data.keys()):
+        if not {"src_id", "period", "year", "elements"} - set(data.keys()):
             filters = data
         connection = "REPLACE_WITH_A_WORKING_CONNECTION"
-        windrose_chart = WindroseDataProcessor(filters, connection)\
-            .generate_chart(base64_encoded=True)
+        windrose_chart = WindroseDataProcessor(filters, connection).generate_chart(
+            base64_encoded=True
+        )
 
-        return mimetype, {
-            'windrose': windrose_chart
-        }
+        return mimetype, {"windrose": windrose_chart}
 
     def __repr__(self):
-        return '<WindroseProcessor> {}'.format(self.name)
+        return "<WindroseProcessor> {}".format(self.name)

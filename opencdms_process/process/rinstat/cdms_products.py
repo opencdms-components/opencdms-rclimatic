@@ -49,9 +49,16 @@ from typing import Dict, List
 from numpy import integer
 from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import (NA_Character, NA_Logical, conversion,
-                           default_converter, globalenv, packages, pandas2ri,
-                           r)
+from rpy2.robjects import (
+    NA_Character,
+    NA_Logical,
+    conversion,
+    default_converter,
+    globalenv,
+    packages,
+    pandas2ri,
+    r,
+)
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
 
