@@ -140,6 +140,8 @@ def climatic_extremes(
     """
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
+    if not elements:
+        elements = StrVector([])
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(**r_params)
     return __get_data_frame(r_data_frame)
@@ -174,6 +176,9 @@ def climatic_missing(
     """
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
+
+    if not elements:
+        elements = StrVector([])
 
     r_params: Dict = __get_r_params(locals())
     r_data_frame: RDataFrame = r_cdms_products.climatic_missing(**r_params)
@@ -256,10 +261,16 @@ def climatic_summary(
     """
     # If dates in data frame do not include timezone data, then set to UTC
 
-    if summaries is None:
+    if not elements:
+        elements = StrVector([])
+
+    if not by:
+        by = StrVector([])
+
+    if not summaries:
         summaries = {"n": "~dplyr::n()"}
 
-    if summaries_params is None:
+    if not summaries_params:
         summaries_params = {}
 
     data[date_time] = to_datetime(data[date_time], utc=True)
@@ -510,7 +521,7 @@ def export_climdex(
     year: str = None,
     month: str = None,
     day: str = None,
-    file_type: FileTypes = "csv",
+    file_type: FileTypes = FileTypes.CSV.value,
 ):
     """Export data in the format for RClimDex.
 
@@ -587,6 +598,11 @@ def export_geoclim(
     Returns:
         Nothing.
     """
+    if not join_by:
+        join_by = StrVector([])
+    if not add_cols:
+        add_cols = StrVector([])
+
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim(**r_params)
 
@@ -630,6 +646,11 @@ def export_geoclim_dekad(
     Returns:
         Nothing.
     """
+    if not join_by:
+        join_by = StrVector([])
+    if not add_cols:
+        add_cols = StrVector([])
+
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_dekad(**r_params)
 
@@ -675,6 +696,11 @@ def export_geoclim_month(
     Returns:
         Nothing.
     """
+    if not join_by:
+        join_by = StrVector([])
+    if not add_cols:
+        add_cols = StrVector([])
+
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_month(**r_params)
 
@@ -718,6 +744,11 @@ def export_geoclim_pentad(
     Returns:
         Nothing.
     """
+    if not join_by:
+        join_by = StrVector([])
+    if not add_cols:
+        add_cols = StrVector([])
+
     r_params: Dict = __get_r_params(locals())
     r_cdms_products.export_geoclim_pentad(**r_params)
 
@@ -729,8 +760,8 @@ def histogram_plot(
     date_time: str,
     elements: List[str],
     station: str = None,
-    facet_by: FacetBy = "stations",
-    position: Position = "identity",
+    facet_by: FacetBy = FacetBy.STATIONS.value,
+    position: Position = Position.IDENTITY.value,
     colour_bank: str = None,
     na_rm: bool = False,
     orientation: str = str(NA_Character),
@@ -790,25 +821,8 @@ def histogram_plot(
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
-    r_params: Dict = __get_r_params(locals())
-    r_plot = r_cdms_products.histogram_plot(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station=r_params["station"],
-        facet_by=r_params["facet_by"],
-        position=r_params["position"],
-        colour_bank=r_params["colour_bank"],
-        na_rm=r_params["na_rm"],
-        orientation=r_params["orientation"],
-        show_legend=r_params["show_legend"],
-        width=r_params["width"],
-        facet_nrow=r_params["facet_nrow"],
-        facet_ncol=r_params["facet_ncol"],
-        title=r_params["title"],
-        x_title=r_params["x_title"],
-        y_title=r_params["y_title"],
-    )
+    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_plot = r_cdms_products.histogram_plot(**r_params)
     r_ggplot2.ggsave(
         filename=file_name,
         plot=r_plot,
@@ -944,7 +958,7 @@ def inventory_plot(
             "key_colours": ["tan3", "blue"],
         }
 
-    r_params: Dict = __get_r_params(locals())
+    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
     # translate none null facet margin parameters to R ggplot margin types
@@ -955,7 +969,7 @@ def inventory_plot(
 
     # convert the dictionary of R lists, into a named R list of R lists
     #   e.g. with format like 'list(breaks = c(0, 0.85, Inf), labels = c("Dry", "Rain"), key_colours = c("tan3", "blue"))'
-    r_rain_cats: Dict[str, list] = {}
+    r_rain_cats: Dict[str, Union[StrVector, FloatVector]] = {}
     for key in rain_cats:
         key_list: List = list(rain_cats[key])
         if len(key_list) > 0:
@@ -965,43 +979,7 @@ def inventory_plot(
                 r_rain_cats[key] = FloatVector(key_list)
     r_params["rain_cats"] = ListVector(r_rain_cats)
 
-    r_plot = r_cdms_products.inventory_plot(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station=r_params["station"],
-        year=r_params["year"],
-        doy=r_params["doy"],
-        year_doy_plot=r_params["year_doy_plot"],
-        facet_by=r_params["facet_by"],
-        facet_x_size=r_params["facet_x_size"],
-        facet_y_size=r_params["facet_y_size"],
-        title=r_params["title"],
-        plot_title_size=r_params["plot_title_size"],
-        plot_title_hjust=r_params["plot_title_hjust"],
-        x_title=r_params["x_title"],
-        y_title=r_params["y_title"],
-        x_scale_from=r_params["x_scale_from"],
-        x_scale_to=r_params["x_scale_to"],
-        x_scale_by=r_params["x_scale_by"],
-        y_date_format=r_params["y_date_format"],
-        y_date_scale_by=r_params["y_date_scale_by"],
-        y_date_scale_step=r_params["y_date_scale_step"],
-        facet_scales=r_params["facet_scales"],
-        facet_dir=r_params["facet_dir"],
-        facet_x_margin=r_params["facet_x_margin"],
-        facet_y_margin=r_params["facet_y_margin"],
-        facet_nrow=r_params["facet_nrow"],
-        facet_ncol=r_params["facet_ncol"],
-        missing_colour=r_params["missing_colour"],
-        present_colour=r_params["present_colour"],
-        missing_label=r_params["missing_label"],
-        present_label=r_params["present_label"],
-        display_rain_days=r_params["display_rain_days"],
-        rain=r_params["rain"],
-        rain_cats=r_params["rain_cats"],
-        coord_flip=r_params["coord_flip"],
-    )
+    r_plot = r_cdms_products.inventory_plot(**r_params)
 
     r_ggplot2.ggsave(
         filename=file_name,
@@ -1017,7 +995,7 @@ def inventory_plot(
 def inventory_table(
     data: DataFrame,
     date_time: str,
-    elements: List[str] = [],
+    elements: List[str] = None,
     station: str = None,
     year: str = None,
     month: str = None,
@@ -1053,6 +1031,8 @@ def inventory_table(
     """
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
+    if not elements:
+        elements = StrVector([])
 
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
@@ -1168,25 +1148,8 @@ def timeseries_plot(
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
-    r_params: Dict = __get_r_params(locals())
-    r_plot = r_cdms_products.timeseries_plot(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station=r_params["station"],
-        facet_by=r_params["facet_by"],
-        type=r_params["type"],
-        add_points=r_params["add_points"],
-        add_line_of_best_fit=r_params["add_line_of_best_fit"],
-        se=r_params["se"],
-        add_path=r_params["add_path"],
-        add_step=r_params["add_step"],
-        na_rm=r_params["na_rm"],
-        show_legend=r_params["show_legend"],
-        title=r_params["title"],
-        x_title=r_params["x_title"],
-        y_title=r_params["y_title"],
-    )
+    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_plot = r_cdms_products.timeseries_plot(**r_params)
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
 
 
@@ -1240,23 +1203,10 @@ def windrose(
         Nothing.
     """
     if speed_cuts is None:
-        speed_cuts = 0
-    r_params: Dict = __get_r_params(locals())
-    r_plot = r_cdms_products.windrose(
-        data=r_params["data"],
-        speed=r_params["speed"],
-        direction=r_params["direction"],
-        facet_by=r_params["facet_by"],
-        n_directions=r_params["n_directions"],
-        n_speeds=r_params["n_speeds"],
-        speed_cuts=r_params["speed_cuts"],
-        col_pal=r_params["col_pal"],
-        ggtheme=r_params["ggtheme"],
-        legend_title=r_params["legend_title"],
-        calm_wind=r_params["calm_wind"],
-        variable_wind=r_params["variable_wind"],
-        n_col=r_params["n_col"],
-    )
+        speed_cuts = FloatVector([])
+
+    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_plot = r_cdms_products.windrose(**r_params)
     r_ggplot2.ggsave(
         filename=file_name,
         plot=r_plot,
@@ -1268,7 +1218,7 @@ def windrose(
     )
 
 
-def __get_r_params(params: Dict) -> Dict:
+def __get_r_params(params: Dict, exclude: set = None) -> Dict:
     """Returns a dictionary of parameters in R format.
 
     Converts each Python parameter in 'params' and converts it into an R
@@ -1283,9 +1233,12 @@ def __get_r_params(params: Dict) -> Dict:
         A dictionary of parameters. Each parameter is in an R format suitable
         for passing to rpy2.
     """
-    r_params: Dict = params.copy()
+    if exclude is None:
+        exclude = set()
 
-    for key in r_params:
+    r_params: Dict = {k: v for k, v in params.items() if k not in exclude}
+
+    for key in r_params.keys():
         if r_params[key] is None:
             r_params[key] = r_NULL
         elif isinstance(r_params[key], List):

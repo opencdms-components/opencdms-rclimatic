@@ -32,7 +32,7 @@ class FacetBy(Enum):
     ELEMENTS_STATIONS = "elements-stations"
     NONE = "none"
 
-class Position:
+class Position(Enum):
     IDENTITY = "identity"
     DODGE = "dodge"
     DODGE2 = "dodge2"
