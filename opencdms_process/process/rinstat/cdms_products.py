@@ -61,7 +61,15 @@ from rpy2.robjects import (
 )
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
-from .enums import DateTimeFormats, Timespan, FileTypes, FacetBy, Position, TimeseriesPlotType, GGThemes
+from .enums import (
+    DateTimeFormats,
+    Timespan,
+    FileTypes,
+    FacetBy,
+    Position,
+    TimeseriesPlotType,
+    GGThemes,
+)
 
 r_cdms_products = packages.importr("cdms.products")
 r_ggplot2 = packages.importr("ggplot2")
