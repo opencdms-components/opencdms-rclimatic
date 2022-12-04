@@ -45,7 +45,7 @@ Each wrapper function:
     type.
 """
 from typing import Dict, List
-
+from pathlib import Path
 from numpy import integer
 from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
@@ -61,6 +61,7 @@ from rpy2.robjects import (
 )
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
+from .enums import DateTimeFormats, Timespan, FileTypes, FacetBy, Position, TimeseriesPlotType, GGThemes
 
 r_cdms_products = packages.importr("cdms.products")
 r_ggplot2 = packages.importr("ggplot2")
@@ -75,7 +76,7 @@ def climatic_extremes(
     month: str = None,
     dekad: str = None,
     pentad: str = None,
-    to: str = "hourly",
+    to: DateTimeFormats = DateTimeFormats.HOURLY,
     by: List[str] = None,
     doy: str = None,
     doy_first: integer = 1,
@@ -140,32 +141,7 @@ def climatic_extremes(
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
     r_params: Dict = __get_r_params(locals())
-    r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station=r_params["station"],
-        year=r_params["year"],
-        month=r_params["month"],
-        dekad=r_params["dekad"],
-        pentad=r_params["pentad"],
-        to=r_params["to"],
-        by=r_params["by"],
-        doy=r_params["doy"],
-        doy_first=r_params["doy_first"],
-        doy_last=r_params["doy_last"],
-        max_val=r_params["max_val"],
-        min_val=r_params["min_val"],
-        first_date=r_params["first_date"],
-        n_dates=r_params["n_dates"],
-        last_date=r_params["last_date"],
-        na_rm=r_params["na_rm"],
-        na_prop=r_params["na_prop"],
-        na_n=r_params["na_n"],
-        na_consec=r_params["na_consec"],
-        na_n_non=r_params["na_n_non"],
-        names=r_params["names"],
-    )
+    r_data_frame: RDataFrame = r_cdms_products.climatic_extremes(**r_params)
     return __get_data_frame(r_data_frame)
 
 
@@ -200,14 +176,7 @@ def climatic_missing(
     data[date_time] = to_datetime(data[date_time], utc=True)
 
     r_params: Dict = __get_r_params(locals())
-    r_data_frame: RDataFrame = r_cdms_products.climatic_missing(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station_id=r_params["station_id"],
-        start=r_params["start"],
-        end=r_params["end"],
-    )
+    r_data_frame: RDataFrame = r_cdms_products.climatic_missing(**r_params)
     return __get_data_frame(r_data_frame)
 
 
@@ -220,7 +189,7 @@ def climatic_summary(
     month: str = None,
     dekad: str = None,
     pentad: str = None,
-    to: str = "hourly",
+    to: DateTimeFormats = DateTimeFormats.HOURLY,
     by: List[str] = None,
     doy: str = None,
     doy_first: integer = 1,
@@ -288,7 +257,7 @@ def climatic_summary(
     # If dates in data frame do not include timezone data, then set to UTC
 
     if summaries is None:
-        summaries = {"n": "dplyr::n"}
+        summaries = {"n": "~dplyr::n()"}
 
     if summaries_params is None:
         summaries_params = {}
@@ -303,39 +272,14 @@ def climatic_summary(
     # summaries_params: convert to a 2-level deep R-type:
     #   one list item for each summary function, and one list of parameters for
     #   each summary function e.g. 'list(mean = list(trim = 0.5))'
-    r_summaries_params: Dict[str, list] = {}
+    r_summaries_params: Dict[str, ListVector] = {}
     for key in summaries_params:
         r_summaries_params[key] = ListVector(summaries_params[key])
         r_summaries_params[key].names = list(summaries_params[key].keys())
     r_params["summaries_params"] = ListVector(r_summaries_params)
     r_params["summaries_params"].names = list(summaries_params.keys())
 
-    r_data_frame: RDataFrame = r_cdms_products.climatic_summary(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        station=r_params["station"],
-        elements=r_params["elements"],
-        year=r_params["year"],
-        month=r_params["month"],
-        dekad=r_params["dekad"],
-        pentad=r_params["pentad"],
-        to=r_params["to"],
-        by=r_params["by"],
-        doy=r_params["doy"],
-        doy_first=r_params["doy_first"],
-        doy_last=r_params["doy_last"],
-        summaries=r_params["summaries"],
-        na_rm=r_params["na_rm"],
-        na_prop=r_params["na_prop"],
-        na_n=r_params["na_n"],
-        na_consec=r_params["na_consec"],
-        na_n_non=r_params["na_n_non"],
-        first_date=r_params["first_date"],
-        n_dates=r_params["n_dates"],
-        last_date=r_params["last_date"],
-        summaries_params=r_params["summaries_params"],
-        names=r_params["names"],
-    )
+    r_data_frame: RDataFrame = r_cdms_products.climatic_summary(**r_params)
     return __get_data_frame(r_data_frame)
 
 
@@ -347,7 +291,7 @@ def export_cdt(
     longitude: str,
     altitude: str,
     file_path: str,
-    type: str = "dekad",
+    type: Timespan = Timespan.DEKAD.value,
     date_time: str = None,
     year: str = None,
     month: str = None,
@@ -395,21 +339,7 @@ def export_cdt(
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    r_cdms_products.export_cdt(
-        data=r_params["data"],
-        station=r_params["station"],
-        element=r_params["element"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        altitude=r_params["altitude"],
-        type=r_params["type"],
-        date_time=r_params["date_time"],
-        year=r_params["year"],
-        month=r_params["month"],
-        dekad=r_params["dekad"],
-        metadata=r_params["metadata"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_cdt(**r_params)
 
 
 def export_cdt_daily(
@@ -421,7 +351,6 @@ def export_cdt_daily(
     longitude: str,
     altitude: str,
     file_path: str,
-    type: str = "dekad",
     metadata: DataFrame = None,
 ):
     """Export daily data in the format for CDT.
@@ -440,7 +369,6 @@ def export_cdt_daily(
         longitude: Name of the longitude column in 'metadata'.
         altitude: Name of the altitude column in 'metadata'.
         file_path: The file path and file name to export.
-        type: The type of data, either 'dekad' or 'daily'.
         metadata: Data frame of station metadata. Use this is the
           station details are in a separate data.frame with one row per
           station. If specified, 'latitude, 'longitude and 'altitude'
@@ -456,18 +384,7 @@ def export_cdt_daily(
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    r_cdms_products.export_cdt_daily(
-        data=r_params["data"],
-        station=r_params["station"],
-        element=r_params["element"],
-        date_time=r_params["date_time"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        type=r_params["type"],
-        altitude=r_params["altitude"],
-        metadata=r_params["metadata"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_cdt_daily(**r_params)
 
 
 def export_cdt_dekad(
@@ -526,27 +443,14 @@ def export_cdt_dekad(
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    r_cdms_products.export_cdt_dekad(
-        data=r_params["data"],
-        station=r_params["station"],
-        element=r_params["element"],
-        date_time=r_params["date_time"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        altitude=r_params["altitude"],
-        year=r_params["year"],
-        month=r_params["month"],
-        dekad=r_params["dekad"],
-        metadata=r_params["metadata"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_cdt_dekad(**r_params)
 
 
 def export_climat_messages(
     data: DataFrame,
     date_time: str,
     station_id: str,
-    folder: str,
+    folder: str = Path.cwd().resolve().absolute(),
     year: str = None,
     month: str = None,
     mean_pressure_station: str = None,
@@ -593,25 +497,7 @@ def export_climat_messages(
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    r_cdms_products.export_climat_messages(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        station_id=r_params["station_id"],
-        year=r_params["year"],
-        month=r_params["month"],
-        mean_pressure_station=r_params["mean_pressure_station"],
-        mean_pressure_reduced=r_params["mean_pressure_reduced"],
-        mean_temp=r_params["mean_temp"],
-        mean_max_temp=r_params["mean_max_temp"],
-        mean_min_temp=r_params["mean_min_temp"],
-        mean_vapour_pressure=r_params["mean_vapour_pressure"],
-        total_precip=r_params["total_precip"],
-        total_sunshine=r_params["total_sunshine"],
-        total_snow_depth=r_params["total_snow_depth"],
-        max_ws=r_params["max_ws"],
-        min_h_vis=r_params["min_h_vis"],
-        folder=r_params["folder"],
-    )
+    r_cdms_products.export_climat_messages(**r_params)
 
 
 def export_climdex(
@@ -624,7 +510,7 @@ def export_climdex(
     year: str = None,
     month: str = None,
     day: str = None,
-    file_type: str = "csv",
+    file_type: FileTypes = "csv",
 ):
     """Export data in the format for RClimDex.
 
@@ -658,18 +544,7 @@ def export_climdex(
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
-    r_cdms_products.export_climdex(
-        data=r_params["data"],
-        prcp=r_params["prcp"],
-        tmax=r_params["tmax"],
-        tmin=r_params["tmin"],
-        date=r_params["date"],
-        year=r_params["year"],
-        month=r_params["month"],
-        day=r_params["day"],
-        file_type=r_params["file_type"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_climdex(**r_params)
 
 
 def export_geoclim(
@@ -681,7 +556,7 @@ def export_geoclim(
     latitude: str,
     longitude: str,
     file_path: str,
-    type: str = "dekad",
+    type: Timespan = Timespan.DEKAD.value,
     metadata: DataFrame = None,
     join_by: List[str] = None,
     add_cols: List[str] = None,
@@ -713,20 +588,7 @@ def export_geoclim(
         Nothing.
     """
     r_params: Dict = __get_r_params(locals())
-    r_cdms_products.export_geoclim(
-        data=r_params["data"],
-        year=r_params["year"],
-        type_col=r_params["type_col"],
-        element=r_params["element"],
-        station_id=r_params["station_id"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        type=r_params["type"],
-        metadata=r_params["metadata"],
-        join_by=r_params["join_by"],
-        add_cols=r_params["add_cols"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_geoclim(**r_params)
 
 
 def export_geoclim_dekad(
@@ -769,19 +631,7 @@ def export_geoclim_dekad(
         Nothing.
     """
     r_params: Dict = __get_r_params(locals())
-    r_cdms_products.export_geoclim_dekad(
-        data=r_params["data"],
-        year=r_params["year"],
-        dekad=r_params["dekad"],
-        element=r_params["element"],
-        station_id=r_params["station_id"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        metadata=r_params["metadata"],
-        join_by=r_params["join_by"],
-        add_cols=r_params["add_cols"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_geoclim_dekad(**r_params)
 
 
 def export_geoclim_month(
@@ -826,19 +676,7 @@ def export_geoclim_month(
         Nothing.
     """
     r_params: Dict = __get_r_params(locals())
-    r_cdms_products.export_geoclim_month(
-        data=r_params["data"],
-        year=r_params["year"],
-        month=r_params["month"],
-        element=r_params["element"],
-        station_id=r_params["station_id"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        metadata=r_params["metadata"],
-        join_by=r_params["join_by"],
-        add_cols=r_params["add_cols"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_geoclim_month(**r_params)
 
 
 def export_geoclim_pentad(
@@ -881,19 +719,7 @@ def export_geoclim_pentad(
         Nothing.
     """
     r_params: Dict = __get_r_params(locals())
-    r_cdms_products.export_geoclim_pentad(
-        data=r_params["data"],
-        year=r_params["year"],
-        pentad=r_params["pentad"],
-        element=r_params["element"],
-        station_id=r_params["station_id"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        metadata=r_params["metadata"],
-        join_by=r_params["join_by"],
-        add_cols=r_params["add_cols"],
-        file_path=r_params["file_path"],
-    )
+    r_cdms_products.export_geoclim_pentad(**r_params)
 
 
 def histogram_plot(
@@ -903,8 +729,8 @@ def histogram_plot(
     date_time: str,
     elements: List[str],
     station: str = None,
-    facet_by: str = "stations",
-    position: str = "identity",
+    facet_by: FacetBy = "stations",
+    position: Position = "identity",
     colour_bank: str = None,
     na_rm: bool = False,
     orientation: str = str(NA_Character),
@@ -1030,11 +856,7 @@ def inventory_plot(
     present_label: str = "Present",
     display_rain_days: bool = False,
     rain: str = None,
-    rain_cats: Dict[str, list] = {
-        "breaks": [0, 0.85, float("inf")],
-        "labels": ["Dry", "Rain"],
-        "key_colours": ["tan3", "blue"],
-    },
+    rain_cats: Dict[str, list] = None,
     coord_flip: bool = False,
 ):
     """Produce an inventory of available and missing data.
@@ -1114,6 +936,13 @@ def inventory_plot(
     """
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
+
+    if rain_cats is None:
+        rain_cats = {
+            "breaks": [0, 0.85, float("inf")],
+            "labels": ["Dry", "Rain"],
+            "key_colours": ["tan3", "blue"],
+        }
 
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
@@ -1227,17 +1056,7 @@ def inventory_table(
 
     r_params: Dict = __get_r_params(locals())
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
-    r_data_frame: RDataFrame = r_cdms_products.inventory_table(
-        data=r_params["data"],
-        date_time=r_params["date_time"],
-        elements=r_params["elements"],
-        station=r_params["station"],
-        year=r_params["year"],
-        month=r_params["month"],
-        day=r_params["day"],
-        missing_indicator=r_params["missing_indicator"],
-        observed_indicator=r_params["observed_indicator"],
-    )
+    r_data_frame: RDataFrame = r_cdms_products.inventory_table(**r_params)
     return __get_data_frame(r_data_frame)
 
 
@@ -1278,18 +1097,7 @@ def output_CPT(
         A data frame formatted for use in CPT.
     """
     r_params: Dict = __get_r_params(locals())
-    r_data_frame: RDataFrame = r_cdms_products.output_CPT(
-        data=r_params["data"],
-        lat_lon_data=r_params["lat_lon_data"],
-        station_latlondata=r_params["station_latlondata"],
-        latitude=r_params["latitude"],
-        longitude=r_params["longitude"],
-        station=r_params["station"],
-        year=r_params["year"],
-        element=r_params["element"],
-        long_data=r_params["long_data"],
-        na_code=r_params["na_code"],
-    )
+    r_data_frame: RDataFrame = r_cdms_products.output_CPT(**r_params)
     return __get_data_frame(r_data_frame)
 
 
@@ -1300,8 +1108,8 @@ def timeseries_plot(
     date_time: str,
     elements: List[str],
     station: str = None,
-    facet_by: str = "stations",
-    type: str = "line",
+    facet_by: FacetBy = FacetBy.STATIONS.value,
+    type: TimeseriesPlotType = TimeseriesPlotType.LINE.value,
     add_points: bool = False,
     add_line_of_best_fit: bool = False,
     se: bool = True,
@@ -1391,9 +1199,9 @@ def windrose(
     facet_by: List[str] = None,
     n_directions: int = 12,
     n_speeds: int = 5,
-    speed_cuts: List[float] = 0,
+    speed_cuts: List[float] = None,
     col_pal: str = "GnBu",
-    ggtheme: str = "grey",
+    ggtheme: GGThemes = "grey",
     legend_title="Wind Speed",
     calm_wind: float = 0,
     variable_wind: float = 990,
@@ -1431,6 +1239,8 @@ def windrose(
     Returns:
         Nothing.
     """
+    if speed_cuts is None:
+        speed_cuts = 0
     r_params: Dict = __get_r_params(locals())
     r_plot = r_cdms_products.windrose(
         data=r_params["data"],

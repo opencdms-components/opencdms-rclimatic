@@ -342,7 +342,6 @@ def test_export_cdt_daily():
         latitude="lat",
         longitude="long",
         altitude="alt",
-        type="daily",
         date_time="date",
         metadata=stations_niger,
         file_path=output_file_actual,
