@@ -1,8 +1,9 @@
 pandas==1.5.2
-pillow
-click
+pillow==9.3.0
+click==8.0.0
 setuptools==65.6.3
-numpy
+numpy==1.23.5
 rpy2==3.5.6
-pygeoapi
-opencdms@git+https://github.com/opencdms/pyopencdms.git#egg=opencdms
+pygeoapi==0.13.0
+opencdms@git+https://github.com/opencdms/pyopencdms.git@main
+opencdms_test_data@git+https://github.com/opencdms/opencdms-test-data.git

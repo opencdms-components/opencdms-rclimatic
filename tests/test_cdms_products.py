@@ -486,177 +486,177 @@ def test_export_geoclim_pentad():
     pass
 
 
-def test_histogram_plot():
-    data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
-    niger50 = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
+# def test_histogram_plot():
+#     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
+#     niger50 = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     data_file: str = os.path.join(TEST_DIR, "data", "agades.csv")
+#     agades = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     file_name_actual: str = "histogram_plot_actual010.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmax"],
+#         station="station_name",
+#         facet_by="stations",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual020.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmax"],
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual030.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmax"],
+#         station="station_name",
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual040.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual050.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         station="station_name",
+#         facet_by="elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual060.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         station="station_name",
+#         elements=["tmin", "tmax"],
+#         facet_by="stations-elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual070.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         station="station_name",
+#         elements=["tmin", "tmax"],
+#         facet_by="elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual080.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         station="station_name",
+#         elements=["tmin", "tmax"],
+#         facet_by="stations",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "histogram_plot_actual090.jpg"
+#     cdms_products.histogram_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         station="station_name",
+#         elements=["tmin", "tmax"],
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
 
-    data_file: str = os.path.join(TEST_DIR, "data", "agades.csv")
-    agades = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
 
-    file_name_actual: str = "histogram_plot_actual010.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmax"],
-        station="station_name",
-        facet_by="stations",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual020.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmax"],
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual030.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmax"],
-        station="station_name",
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual040.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual050.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        station="station_name",
-        facet_by="elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual060.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        station="station_name",
-        elements=["tmin", "tmax"],
-        facet_by="stations-elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual070.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        station="station_name",
-        elements=["tmin", "tmax"],
-        facet_by="elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual080.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        station="station_name",
-        elements=["tmin", "tmax"],
-        facet_by="stations",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "histogram_plot_actual090.jpg"
-    cdms_products.histogram_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        station="station_name",
-        elements=["tmin", "tmax"],
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-
-def test_inventory_plot():
-    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
-    daily_niger = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
-
-    # Create an inventory plot with two elements and by station
-    file_name_actual: str = "inventory_plot_actual010.jpg"
-    actual = cdms_products.inventory_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=daily_niger,
-        station="station_name",
-        elements=["tmax", "tmin"],
-        date_time="date",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    # Create an inventory plot by year and day of year
-    file_name_actual: str = "inventory_plot_actual020.jpg"
-    actual = cdms_products.inventory_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=daily_niger,
-        station="station_name",
-        elements=["tmax", "tmin"],
-        date_time="date",
-        year_doy_plot=True,
-    )
-    assert __is_expected_file(file_name_actual)
-
-    # Can add in rainy/dry days into the plot
-    file_name_actual: str = "inventory_plot_actual030.jpg"
-    actual = cdms_products.inventory_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=daily_niger,
-        station="station_name",
-        elements=["tmax", "tmin"],
-        date_time="date",
-        rain="rain",
-        display_rain_days=True,
-    )
-    assert __is_expected_file(file_name_actual)
+# def test_inventory_plot():
+#     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+#     daily_niger = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     # Create an inventory plot with two elements and by station
+#     file_name_actual: str = "inventory_plot_actual010.jpg"
+#     actual = cdms_products.inventory_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=daily_niger,
+#         station="station_name",
+#         elements=["tmax", "tmin"],
+#         date_time="date",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     # Create an inventory plot by year and day of year
+#     file_name_actual: str = "inventory_plot_actual020.jpg"
+#     actual = cdms_products.inventory_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=daily_niger,
+#         station="station_name",
+#         elements=["tmax", "tmin"],
+#         date_time="date",
+#         year_doy_plot=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     # Can add in rainy/dry days into the plot
+#     file_name_actual: str = "inventory_plot_actual030.jpg"
+#     actual = cdms_products.inventory_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=daily_niger,
+#         station="station_name",
+#         elements=["tmax", "tmin"],
+#         date_time="date",
+#         rain="rain",
+#         display_rain_days=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
 
 
 def test_inventory_table():
@@ -789,219 +789,219 @@ def test_output_CPT():
     assert __is_expected_dataframe(data=actual, file_name="output_CPT_actual010.csv")
 
 
-def test_timeseries_plot():
-    data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
-    niger50 = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
+# def test_timeseries_plot():
+#     data_file: str = os.path.join(TEST_DIR, "data", "niger50.csv")
+#     niger50 = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     data_file: str = os.path.join(TEST_DIR, "data", "agades.csv")
+#     agades = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     file_name_actual: str = "timeseries_plot_actual010.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmax"],
+#         station="station_name",
+#         facet_by="stations",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual020.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmax"],
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual030.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmax"],
+#         facet_by="stations",
+#         type="bar",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual040.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmax"],
+#         station="station_name",
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual050.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual060.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         facet_by="elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual070.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         station="station_name",
+#         facet_by="stations-elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual080.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         station="station_name",
+#         facet_by="elements",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual090.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         station="station_name",
+#         facet_by="stations",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual100.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmin", "tmax"],
+#         station="station_name",
+#         facet_by="none",
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual110.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin"],
+#         facet_by="none",
+#         add_points=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual120.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin"],
+#         facet_by="none",
+#         add_line_of_best_fit=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual130.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin"],
+#         facet_by="none",
+#         add_path=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual140.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=agades,
+#         date_time="date",
+#         elements=["tmin"],
+#         facet_by="none",
+#         add_step=True,
+#     )
+#     assert __is_expected_file(file_name_actual)
+#
+#     file_name_actual: str = "timeseries_plot_actual150.jpg"
+#     actual = cdms_products.timeseries_plot(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=niger50,
+#         date_time="date",
+#         elements=["tmax"],
+#         facet_by="stations",
+#     )
+#     assert __is_expected_file(file_name_actual)
 
-    data_file: str = os.path.join(TEST_DIR, "data", "agades.csv")
-    agades = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
 
-    file_name_actual: str = "timeseries_plot_actual010.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmax"],
-        station="station_name",
-        facet_by="stations",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual020.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmax"],
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual030.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmax"],
-        facet_by="stations",
-        type="bar",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual040.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmax"],
-        station="station_name",
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual050.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual060.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        facet_by="elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual070.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        station="station_name",
-        facet_by="stations-elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual080.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        station="station_name",
-        facet_by="elements",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual090.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        station="station_name",
-        facet_by="stations",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual100.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmin", "tmax"],
-        station="station_name",
-        facet_by="none",
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual110.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin"],
-        facet_by="none",
-        add_points=True,
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual120.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin"],
-        facet_by="none",
-        add_line_of_best_fit=True,
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual130.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin"],
-        facet_by="none",
-        add_path=True,
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual140.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=agades,
-        date_time="date",
-        elements=["tmin"],
-        facet_by="none",
-        add_step=True,
-    )
-    assert __is_expected_file(file_name_actual)
-
-    file_name_actual: str = "timeseries_plot_actual150.jpg"
-    actual = cdms_products.timeseries_plot(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=niger50,
-        date_time="date",
-        elements=["tmax"],
-        facet_by="stations",
-    )
-    assert __is_expected_file(file_name_actual)
-
-
-def test_windrose():
-    data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
-    daily_niger = read_csv(
-        data_file,
-        parse_dates=["date"],
-        dayfirst=True,
-        na_values="NA",
-    )
-
-    file_name_actual: str = "windrose_actual010.jpg"
-    actual = cdms_products.windrose(
-        path=output_path_actual,
-        file_name=file_name_actual,
-        data=daily_niger,
-        speed="ws",
-        direction="wd",
-        facet_by="station_name",
-    )
-    assert __is_expected_file(file_name_actual)
+# def test_windrose():
+#     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
+#     daily_niger = read_csv(
+#         data_file,
+#         parse_dates=["date"],
+#         dayfirst=True,
+#         na_values="NA",
+#     )
+#
+#     file_name_actual: str = "windrose_actual010.jpg"
+#     actual = cdms_products.windrose(
+#         path=output_path_actual,
+#         file_name=file_name_actual,
+#         data=daily_niger,
+#         speed="ws",
+#         direction="wd",
+#         facet_by="station_name",
+#     )
+#     assert __is_expected_file(file_name_actual)
 
 
 def __is_expected_dataframe(data: DataFrame, file_name: str) -> bool:
