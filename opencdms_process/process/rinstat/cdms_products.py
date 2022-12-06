@@ -829,7 +829,9 @@ def histogram_plot(
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
-    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_params: Dict = __get_r_params(
+        locals(), exclude={"file_name", "path", "ggtheme"}
+    )
     r_plot = r_cdms_products.histogram_plot(**r_params)
     r_ggplot2.ggsave(
         filename=file_name,
@@ -966,7 +968,9 @@ def inventory_plot(
             "key_colours": ["tan3", "blue"],
         }
 
-    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_params: Dict = __get_r_params(
+        locals(), exclude={"file_name", "path", "ggtheme"}
+    )
     r_params["data"] = __convert_posixt_to_r_date(r_params["data"])
 
     # translate none null facet margin parameters to R ggplot margin types
@@ -1156,7 +1160,9 @@ def timeseries_plot(
     # If dates in data frame do not include timezone data, then set to UTC
     data[date_time] = to_datetime(data[date_time], utc=True)
 
-    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_params: Dict = __get_r_params(
+        locals(), exclude={"file_name", "path", "ggtheme"}
+    )
     r_plot = r_cdms_products.timeseries_plot(**r_params)
     r_ggplot2.ggsave(filename=file_name, plot=r_plot, device="jpeg", path=path)
 
@@ -1213,7 +1219,9 @@ def windrose(
     if speed_cuts is None:
         speed_cuts = FloatVector([])
 
-    r_params: Dict = __get_r_params(locals(), exclude={"file_name", "path", "ggtheme"})
+    r_params: Dict = __get_r_params(
+        locals(), exclude={"file_name", "path", "ggtheme"}
+    )
     r_plot = r_cdms_products.windrose(**r_params)
     r_ggplot2.ggsave(
         filename=file_name,
@@ -1256,7 +1264,9 @@ def __get_r_params(params: Dict, exclude: set = None) -> Dict:
                 elif isinstance(r_params[key][0], float):
                     r_params[key] = FloatVector(r_params[key])
         elif isinstance(r_params[key], DataFrame):
-            with conversion.localconverter(default_converter + pandas2ri.converter):
+            with conversion.localconverter(
+                default_converter + pandas2ri.converter
+            ):
                 r_params[key] = conversion.py2rpy(r_params[key])
 
     return r_params
@@ -1293,5 +1303,6 @@ def __convert_posixt_to_r_date(r_data_frame: RDataFrame) -> RDataFrame:
     """
     globalenv["df"] = r_data_frame
     return r(
-        'data.frame(lapply(df, function(x) { if (inherits(x, "POSIXt")) as.Date(x) else x }))'
+        'data.frame(lapply(df, function(x) { if (inherits(x, "POSIXt"))'
+        " as.Date(x) else x }))"
     )

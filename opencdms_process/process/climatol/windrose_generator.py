@@ -61,7 +61,10 @@ PROCESS_METADATA = {
         "windrose": {
             "title": "Windrose chart",
             "description": "Return a chart with windrose visualization.",
-            "schema": {"type": "object", "contentMediaType": "application/json"},
+            "schema": {
+                "type": "object",
+                "contentMediaType": "application/json",
+            },
         }
     },
     "example": {
@@ -89,7 +92,9 @@ class WindroseDataProcessor:
 
         if base64_encoded:
             bas64_bytes = base64.b64encode(buffered.getvalue())
-            returned_image = f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
+            returned_image = (
+                f'data:image/png;base64,{bas64_bytes.decode("utf-8")}'
+            )
         else:
             returned_image = image
 
@@ -123,9 +128,9 @@ class WindroseProcessor(BaseProcessor):
             filters = data
 
         connection = opencdms_test_data.connections.midas_open
-        windrose_chart = WindroseDataProcessor(filters, connection).generate_chart(
-            base64_encoded=True
-        )
+        windrose_chart = WindroseDataProcessor(
+            filters, connection
+        ).generate_chart(base64_encoded=True)
 
         return mimetype, {"windrose": windrose_chart}
 
