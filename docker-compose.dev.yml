@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    opencdms-process-dev:
+        build:
+            context: .
+            dockerfile: docker/dev.dockerfile
+        entrypoint: ["tox"]
+        volumes:
+            -   "${PWD}:/opt/project"
+
