@@ -401,7 +401,7 @@ def test_export_climdex():
     )
 
     output_file_actual: str = os.path.join(
-        TEST_DIR, "results_actual", "export_climdex_actual010.csv"
+        TEST_DIR, "results_actual", "export_climdex_actual010"
     )
     cdms_products.export_climdex(
         data=daily_niger,
