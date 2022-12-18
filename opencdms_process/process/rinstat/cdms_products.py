@@ -44,32 +44,20 @@ Each wrapper function:
     function. If needed, it converts the returned result into a Python data
     type.
 """
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict, List, Union
+
 from numpy import integer
 from pandas import DataFrame, to_datetime
 from rpy2.robjects import NULL as r_NULL
-from rpy2.robjects import (
-    NA_Character,
-    NA_Logical,
-    conversion,
-    default_converter,
-    globalenv,
-    packages,
-    pandas2ri,
-    r,
-)
+from rpy2.robjects import (NA_Character, NA_Logical, conversion,
+                           default_converter, globalenv, packages, pandas2ri,
+                           r)
 from rpy2.robjects.vectors import DataFrame as RDataFrame
 from rpy2.robjects.vectors import FloatVector, ListVector, StrVector
-from .enums import (
-    DateTimeFormats,
-    Timespan,
-    FileTypes,
-    FacetBy,
-    Position,
-    TimeseriesPlotType,
-    GGThemes,
-)
+
+from .enums import (DateTimeFormats, FacetBy, FileTypes, GGThemes, Position,
+                    TimeseriesPlotType, Timespan)
 
 r_cdms_products = packages.importr("cdms.products")
 r_ggplot2 = packages.importr("ggplot2")
@@ -229,7 +217,8 @@ def climatic_summary(
         date_time: The name of the date column in 'data'.
         station: The name of the station column in 'data', if the data are
           for multiple stations.
-        elements: The name of the elements column in 'data' to apply the function to..
+        elements: The name of the elements column in 'data'
+         to apply the function to..
         year: The name of the year column in 'data'.
         month: The name of the month column in 'data'.
         dekad: The name of the dekad column in 'data'.
@@ -598,7 +587,7 @@ def export_geoclim(
           'metadata' is 'None'.
         type: Whether the data is in 'dekad' or 'pentad' format.
         metadata: The metadata data frame to calculate from.
-        join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
+        join_by: The variable(s) to merge the 'data' and 'metadata' data frames
         add_cols: Names of additional metadata columns that should be included
           in the output.
         file_path: The file path and file name to export.
@@ -647,7 +636,7 @@ def export_geoclim_dekad(
           'metadata' is 'None'.
         file_path: The file path and file name to export.
         metadata: The metadata data frame to calculate from.
-        join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
+        join_by: The variable(s) to merge the 'data' and 'metadata' dataframes
         add_cols: Names of additional metadata columns that should be included
           in the output.
 
@@ -697,7 +686,7 @@ def export_geoclim_month(
           if 'metadata' is 'None'.
         file_path: The file path and file name to export.
         metadata: The metadata data frame to calculate from.
-        join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
+        join_by: The variable(s) to merge the 'data' and 'metadata' data frames
         add_cols: Names of additional metadata columns that should be included
           in the output.
 
@@ -745,7 +734,7 @@ def export_geoclim_pentad(
           'metadata' is 'None'.
         file_path: The file path and file name to export.
         metadata: The metadata data frame to calculate from.
-        join_by: The variable(s) to merge the 'data' and 'metadata' data frames.
+        join_by: The variable(s) to merge the 'data' and 'metadata' dataframes
         add_cols: Names of additional metadata columns that should be included
           in the output.
 
@@ -772,7 +761,7 @@ def histogram_plot(
     position: Position = Position.IDENTITY.value,
     colour_bank: str = None,
     na_rm: bool = False,
-    orientation: str = str(NA_Character),
+    orientation: str = NA_Character,
     show_legend: bool = NA_Logical,
     width: int = None,
     facet_nrow: int = None,
@@ -926,9 +915,10 @@ def inventory_plot(
         y_date_format: TODO
         y_date_scale_by: TODO
         y_date_scale_step: TODO
-        facet_scales: Are scales shared across all facets (the default, 'fixed'),
-          or do they vary across rows ('free_x'), columns ('free_y'), or both
-          rows and columns ('free')?
+        facet_scales: Are scales shared across all
+            facets (the default, 'fixed'), or do they vary across
+            rows ('free_x'), columns ('free_y'), or both
+            rows and columns ('free')?
         facet_dir: TODO
         facet_x_margin: Margin width around the text for the x-facets.
         facet_y_margin: Margin width around the text for the y-facets.
@@ -980,7 +970,8 @@ def inventory_plot(
         r_params["facet_y_margin"] = r_ggplot2.margin(1, 0, 1, 0)
 
     # convert the dictionary of R lists, into a named R list of R lists
-    #   e.g. with format like 'list(breaks = c(0, 0.85, Inf), labels = c("Dry", "Rain"), key_colours = c("tan3", "blue"))'
+    #  e.g. with format like 'list(breaks = c(0, 0.85, Inf),
+    #  labels = c("Dry", "Rain"), key_colours = c("tan3", "blue"))'
     r_rain_cats: Dict[str, Union[StrVector, FloatVector]] = {}
     for key in rain_cats:
         key_list: List = list(rain_cats[key])
@@ -1023,7 +1014,8 @@ def inventory_table(
     Args:
         data: The data frame to calculate from.
         date_time: The name of the date column in 'data'.
-        elements: The name of the elements column in 'data' to apply the function to..
+        elements: The name of the elements column in 'data'
+          to apply the function to..
         station: The name of the station column in 'data', if the data are
           for multiple stations. The inventory table is
           calculated separately for each station.
@@ -1075,14 +1067,15 @@ def output_CPT(
           'lat_lon_data', or 'data' if 'long_data' is False.
         latitude: The name of the latitude column in 'lat_lon_data', or 'data'
           if 'long_data' is False.
-        longitude: The name of the longitude column in 'lat_lon_data', or 'data'
-          if 'long_data' is False.
+        longitude: The name of the longitude column
+            in 'lat_lon_data', or 'data' if 'long_data' is False.
         station: The name of the station column in 'data', if the data are
           for multiple station.
         year: The name of the year column in 'data'.
         element: Name of the element column in 'data'.
-        long_data: Whether all columns are in 'data'. If all data is in one data
-          frame then must have 'long_data = TRUE'.
+        long_data: Whether all columns are in 'data'.
+            If all data is in one dataframe
+            then must have 'long_data = TRUE'.
         na_code: Indicator for NA values in data.
 
     Returns:
@@ -1197,8 +1190,9 @@ def windrose(
         speed: A vector containing wind speeds.
         direction: A vector containing wind direction.
         facet_by: Facets used to plot the various windroses.
-        n_directions: The number of direction bins to plot (petals on the rose).
-            The number of directions defaults to 12.
+        n_directions: The number of direction bins to
+            plot (petals on the rose). The number of directions
+            defaults to 12.
         n_speeds: The number of equally spaced wind speed bins to plot.
             This is used if speed_cuts is NA (default 5).
         speed_cuts: A vector containing the cut points for the wind speed
@@ -1284,16 +1278,16 @@ def __get_data_frame(r_data_frame: RDataFrame) -> DataFrame:
         The data frame converted into Python format.
     """
     # convert R data frame to pandas data frame
-    with conversion.localconverter(default_converter + pandas2ri.converter):
-        data_frame: DataFrame = conversion.rpy2py(r_data_frame)
+    with conversion.localconverter(pandas2ri.converter):
+        data_frame: DataFrame = conversion.rpy2py(r_data_frame).fillna("")
     return data_frame
 
 
 def __convert_posixt_to_r_date(r_data_frame: RDataFrame) -> RDataFrame:
     """Converts all Posix dates in a data frame, to 'Date` format.
 
-    Converts all Posix dates in 'r_data_frame' into R 'Date' format and returns the
-    updated R data frame.
+    Converts all Posix dates in 'r_data_frame' into
+    R 'Date' format and returns the updated R data frame.
 
     Args:
         r_data_frame: A data frame in rpy2 R format.

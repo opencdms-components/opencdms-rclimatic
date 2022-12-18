@@ -1,11 +1,12 @@
-import logging
-import os.path
-from opencdms_process.process.climatol import windrose
-from opencdms import MidasOpen
-from pygeoapi.process.base import BaseProcessor, ProcessorExecuteError
-from io import BytesIO
 import base64
+import logging
+from io import BytesIO
+
 import opencdms_test_data
+from opencdms import MidasOpen
+from pygeoapi.process.base import BaseProcessor
+
+from opencdms_process.process.climatol import windrose
 
 LOGGER = logging.getLogger(__name__)
 

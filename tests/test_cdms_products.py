@@ -56,7 +56,7 @@ t1 <- histogram_plot(data = agades, date_time = "date",
                      elements = c("tmin", "tmax"), facet_by = "elements")
 
 #inventory_plot
-mydata <- read.csv("C:\\Users\\steph\\OneDrive\\Desktop\\FirefoxDownloads\\observationFinalMinimal.csv")
+mydata <- read.csv("/path/to/observationFinalMinimal.csv")
 df <- data.frame(mydata)
 df$obsDatetime <- as.Date(df$obsDatetime,format="%d/%m/%Y %H:%M")
 r_plot <- inventory_plot(data=df, station="ï..recordedFrom",
@@ -69,7 +69,8 @@ ggplot2::ggsave(filename="inventory_plot01.jpg", plot=r_plot, device="jpeg",
 yearly_niger <- daily_niger %>% dplyr::group_by(station_name, year) %>%
         dplyr::summarise(mean_rain = mean(rain))
 output_CPT(data = yearly_niger, lat_lon_data = stations_niger,
-        station_latlondata = "station_name", latitude = "lat", longitude = "long",
+        station_latlondata = "station_name",
+        latitude = "lat", longitude = "long",
         station = "station_name", year = "year", element = "mean_rain")
 actual <- export_cdt(
   data=daily_niger,
@@ -248,7 +249,9 @@ def test_climatic_summary():
 
     # test with data used in demo
 
-    data_file: str = os.path.join(TEST_DIR, "data", "observationFinalMinimal.csv")
+    data_file: str = os.path.join(
+        TEST_DIR, "data", "observationFinalMinimal.csv"
+    )
     observationFinalMinimal = read_csv(
         data_file,
         parse_dates=["obsDatetime"],
@@ -384,7 +387,8 @@ def test_export_cdt_dekad():
 
 
 def test_export_climat_messages():
-    pass  # TODO test requested in https://github.com/IDEMSInternational/cdms.products/issues/86
+    pass  # TODO test requested in
+    # https://github.com/IDEMSInternational/cdms.products/issues/86
 
 
 def test_export_climdex():
@@ -443,7 +447,9 @@ def test_export_geoclim():
 
 
 def test_export_geoclim_dekad():
-    # TODO This test can be added when https://github.com/IDEMSInternational/cdms.products/issues/87 is resolved
+    # TODO This test can be added when
+    # https://github.com/IDEMSInternational/cdms.products/issues/87
+    # is resolved
     pass
 
 
@@ -482,7 +488,9 @@ def test_export_geoclim_month():
 
 
 def test_export_geoclim_pentad():
-    # TODO This test can be added when https://github.com/IDEMSInternational/cdms.products/issues/87 is resolved
+    # TODO This test can be added when
+    #  https://github.com/IDEMSInternational/cdms.products/issues/87
+    #  is resolved
     pass
 
 
@@ -662,12 +670,15 @@ def test_export_geoclim_pentad():
 def test_inventory_table():
     data_file: str = os.path.join(TEST_DIR, "data", "daily_niger.csv")
     """
-    Note: `inventory_table()` was updated to format the date column before the R function is called.
-          Therefore it is no longer possible to trigger the R exception. The test below is
-          commented out rather than deleted, because it provides an example of how to catch and test
-          for an exception raised in the R code.
+    Note: `inventory_table()` was updated to format the
+        date column before the R function is called.
+        Therefore it is no longer possible to trigger
+        the R exception. The test below is commented out
+        rather than deleted, because it provides an example
+        of how to catch and test for an exception raised in the R code.
 
-    # test with data that has invalid format for date column, should trigger exception
+    # test with data that has invalid format for date column,
+    # should trigger exception
     daily_niger = read_csv(
         data_file,
         # parse_dates=["date"],
@@ -690,8 +701,8 @@ def test_inventory_table():
         actual: str = err.args[0]
         expected: str = (
             "Error in (function (data, date_time, elements, station = NULL, "
-            "year = NULL,  : \n  Assertion on 'data[[date_time]]' failed: Must be of class "
-            "'Date', not 'character'.\n"
+            "year = NULL,  : \n  Assertion on 'data[[date_time]]' failed: "
+            "Must be of class 'Date', not 'character'.\n"
         )
         assert actual == expected
     """
@@ -714,6 +725,7 @@ def test_inventory_table():
         month="month",
         day="day",
     )
+
     assert __is_expected_dataframe(
         data=actual, file_name="inventory_table_actual010.csv"
     )
@@ -786,7 +798,9 @@ def test_output_CPT():
         year="year",
         element="mean_rain",
     )
-    assert __is_expected_dataframe(data=actual, file_name="output_CPT_actual010.csv")
+    assert __is_expected_dataframe(
+        data=actual, file_name="output_CPT_actual010.csv"
+    )
 
 
 # def test_timeseries_plot():
@@ -1005,12 +1019,17 @@ def test_output_CPT():
 
 
 def __is_expected_dataframe(data: DataFrame, file_name: str) -> bool:
-    output_file_actual, output_file_expected = __get_output_file_paths(file_name)
+    output_file_actual, output_file_expected = __get_output_file_paths(
+        file_name
+    )
 
-    # write the actual results to csv file, and then read the results back in again
-    # Note:We read the expected results from a csv file. Writing/reading this file may change the
-    #      data frame's metadata. Therefore, we must also write/read the actual results to csv so
-    #      that we are comparing like with like.
+    # write the actual results to csv file,
+    # and then read the results back in again
+    # Note:We read the expected results from a csv file.
+    # Writing/reading this file may change the
+    # data frame's metadata.
+    # Therefore, we must also write/read the actual results to csv so
+    # that we are comparing like with like.
     data.to_csv(output_file_actual, index=False)
     actual_from_csv: DataFrame = read_csv(output_file_actual)
 
@@ -1023,12 +1042,16 @@ def __is_expected_dataframe(data: DataFrame, file_name: str) -> bool:
 
 
 def __is_expected_file(file_name: str) -> bool:
-    output_file_actual, output_file_expected = __get_output_file_paths(file_name)
+    output_file_actual, output_file_expected = __get_output_file_paths(
+        file_name
+    )
     return filecmp.cmp(output_file_actual, output_file_expected)
 
 
 def __get_output_file_paths(file_name: str):
-    output_file_actual: str = os.path.join(TEST_DIR, "results_actual", file_name)
+    output_file_actual: str = os.path.join(
+        TEST_DIR, "results_actual", file_name
+    )
     output_file_expected: str = os.path.join(
         TEST_DIR, "results_expected", file_name.replace("actual", "expected")
     )

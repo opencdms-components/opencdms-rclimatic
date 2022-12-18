@@ -1,10 +1,11 @@
-from io import BytesIO
 import logging
 import os
+from io import BytesIO
+
 import PIL.Image as Image
-from rpy2.robjects import r, default_converter, conversion, globalenv
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
-from rpy2.robjects import pandas2ri
+from rpy2.robjects import (conversion, default_converter, globalenv, pandas2ri,
+                           r)
 from rpy2.robjects.conversion import localconverter
 
 
@@ -24,7 +25,7 @@ def windrose(obs):
     globalenv["observations"] = _obs
 
     r(
-        f"""
+        """
 library('magick')
 
 figure <- image_graph(width = 350, height = 350, res = 96)

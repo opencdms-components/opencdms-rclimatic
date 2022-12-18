@@ -1,5 +1,6 @@
 """Console script for opencdms_process."""
 import sys
+
 import click
 
 
