@@ -5,7 +5,7 @@ services:
         build:
             context: .
             dockerfile: docker/dev.dockerfile
-        entrypoint: ["tox"]
+        entrypoint: ["bash"]
         volumes:
             -   "${PWD}:/opt/project"
 

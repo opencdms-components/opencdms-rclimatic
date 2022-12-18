@@ -14,3 +14,5 @@ COPY requirements.txt requirements.txt
 COPY requirements_dev.txt requirements_dev.txt
 
 RUN pip install -r requirements_dev.txt
+
+ENV PYTHONPATH="$PYTHONPATH":/opt/project

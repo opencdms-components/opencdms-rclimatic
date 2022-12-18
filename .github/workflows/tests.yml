@@ -23,6 +23,7 @@ jobs:
                 R -e "devtools::install_github('IDEMSInternational/cdms.products')"
         -   name: Install dependencies
             run: |
+                mkdir results_actual
                 pip install -r requirements_dev.txt
                 pip install .
         -   name: Run tests
