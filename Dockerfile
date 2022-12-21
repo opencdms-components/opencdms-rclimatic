@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
 RUN apt-get update -y
-RUN apt-get install -y libcurl4-openssl-dev libssl-dev \
+RUN apt-get install -y libcurl4-openssl-dev libssl-dev libxml2 libxml2-dev\
     libnetcdf-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
     libnetcdf-dev r-base git libpq-dev python3-dev default-mysql-client default-libmysqlclient-dev
 RUN R -e "install.packages(c('remotes','textshaping', 'systemfonts', 'ncdf4'))"
