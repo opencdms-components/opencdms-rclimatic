@@ -9,7 +9,7 @@ RUN R -e "remotes::install_github('IDEMSInternational/cdms.products')"
 
 RUN mkdir /opt/project
 WORKDIR /opt/project
-RUN mkdir /opt/project/tests/results_actual
+RUN mkdir -p /opt/project/tests/results_actual
 COPY requirements.txt requirements.txt
 COPY requirements_dev.txt requirements_dev.txt
 
