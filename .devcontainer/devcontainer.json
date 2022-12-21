@@ -1,3 +1,10 @@
 {
-    "build": { "dockerfile": "Dockerfile" }
+	"name": "OpenCDMS Process",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+
+	"service": "opencdms-process-dev",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {}
 }
