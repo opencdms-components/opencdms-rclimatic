@@ -7,3 +7,4 @@ services:
             dockerfile: Dockerfile
         volumes:
             -   "${PWD}:/opt/project"
+        command: /bin/sh -c "while sleep 1000; do :; done"
