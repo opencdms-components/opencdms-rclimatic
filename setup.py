@@ -55,5 +55,5 @@ setup(
     url="https://github.com/opencdms/opencdms",
     version="0.1.0",
     zip_safe=False,
-    package_data={'': ["*.r", "*.R"]}
+    package_data={"": ["*.r", "*.R"]},
 )

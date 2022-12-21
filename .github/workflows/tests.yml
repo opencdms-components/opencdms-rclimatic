@@ -1,0 +1,32 @@
+name: Run tests
+
+on:
+    push:
+
+jobs:
+    test-job:
+        runs-on: ubuntu-latest
+        container: python:3.8
+        steps:
+        -   name: Checkout
+            uses: actions/checkout@v2
+        -   name: Install packages
+            env:
+                GITHUB_PAT: ${{secrets.PAT}}
+            run: |
+                apt-get update -y
+                apt-get install -y libcurl4-openssl-dev libssl-dev libnetcdf-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libnetcdf-dev r-base
+                R -e "install.packages('devtools')"
+                R -e "install.packages('textshaping')"
+                R -e "install.packages('systemfonts')"
+                R -e "install.packages('ncdf4')"
+                R -e "devtools::install_github('IDEMSInternational/cdms.products')"
+        -   name: Install dependencies
+            run: |
+                mkdir tests/results_actual
+                chmod 777 tests/results_actual
+                pip install -r requirements_dev.txt
+                pip install .
+        -   name: Run tests
+            run: |
+                tox
