@@ -94,6 +94,7 @@ from opencdms_process.process.rinstat import cdms_products
 
 TEST_DIR = os.path.dirname(__file__)
 output_path_actual: str = os.path.join(TEST_DIR, "results_actual")
+os.makedirs(output_path_actual, exist_ok=True)
 
 
 def test_climatic_extremes():
