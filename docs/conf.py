@@ -125,7 +125,13 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "opencdms_process.tex", "opencdms_process Documentation", "OpenCDMS", "manual"),
+    (
+        master_doc,
+        "opencdms_process.tex",
+        "opencdms_process Documentation",
+        "OpenCDMS",
+        "manual",
+    ),
 ]
 
 
@@ -133,7 +139,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "opencdms_process", "opencdms_process Documentation", [author], 1)]
+man_pages = [
+    (
+        master_doc,
+        "opencdms_process",
+        "opencdms_process Documentation",
+        [author],
+        1,
+    )
+]
 
 
 # -- Options for Texinfo output ----------------------------------------
